@@ -1,4 +1,4 @@
-# Guía del Administrador — Marketplace de Ropa Usada
+# Guía del Administrador — Marketplace Ecuador
 
 ---
 

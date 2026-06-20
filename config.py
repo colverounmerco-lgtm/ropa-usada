@@ -16,7 +16,7 @@ class Config:
     SECRET_KEY     = get_env("SECRET_KEY")
     ADMIN_EMAIL    = get_env("ADMIN_EMAIL")
     ADMIN_PASSWORD = get_env("ADMIN_PASSWORD")
-    NOMBRE_TIENDA  = get_env("NOMBRE_TIENDA", default="Mi Marketplace", required=False)
+    NOMBRE_TIENDA  = get_env("NOMBRE_TIENDA", default="Marketplace Ecuador", required=False)
     APP_URL        = get_env("APP_URL", default="", required=False)
     BANCO_NOMBRE   = get_env("BANCO_NOMBRE", default="Banco XYZ", required=False)
     BANCO_CUENTA   = get_env("BANCO_CUENTA", default="0000000000", required=False)
