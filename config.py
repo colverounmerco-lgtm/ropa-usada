@@ -27,10 +27,10 @@ class Config:
     CLOUDINARY_API_SECRET = get_env("CLOUDINARY_API_SECRET", required=False)
 
     # Railway provee postgres://, convertir a postgresql+pg8000:// para producción
-    _db_url = get_env("DATABASE_URL", default="sqlite:///ropa.db", required=False)
-    if _db_url and _db_url.startswith("postgres://"):
+    _db_url = (get_env("DATABASE_URL", default="sqlite:///ropa.db", required=False) or "").strip()
+    if _db_url.startswith("postgres://"):
         DATABASE_URL = _db_url.replace("postgres://", "postgresql+pg8000://", 1)
-    elif _db_url and _db_url.startswith("postgresql://"):
+    elif _db_url.startswith("postgresql://"):
         DATABASE_URL = _db_url.replace("postgresql://", "postgresql+pg8000://", 1)
     else:
         DATABASE_URL = _db_url or "sqlite:///ropa.db"
