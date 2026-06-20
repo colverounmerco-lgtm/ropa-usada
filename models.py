@@ -52,7 +52,7 @@ class Usuario(db.Model):
 
     @property
     def puede_vender(self):
-        return self.wallet_saldo > 0
+        return self.wallet_saldo >= 1.0
 
 
 COMISION_PORCENTAJE = 0.10
