@@ -21,9 +21,13 @@
         <small class="precio-preview" id="precio-preview"></small>
       </div>
       <div class="campo">
-        <label>Atributo <small>(talla, capacidad, año, duración...)</small></label>
-        <input type="text" name="talla" placeholder="Ej: Talla M, 64GB, 2023, Por hora, Único..." maxlength="50">
+        <label>Cantidad disponible *</label>
+        <input type="number" name="cantidad" value="1" min="1" max="9999" required>
       </div>
+    </div>
+    <div class="campo">
+      <label>Atributo <small>(talla, capacidad, año, duración...)</small></label>
+      <input type="text" name="talla" placeholder="Ej: Talla M, 64GB, 2023, Por hora, Único..." maxlength="50">
     </div>
     <div class="campos-fila">
       <div class="campo">

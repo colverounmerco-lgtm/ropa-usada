@@ -3,6 +3,7 @@ from functools import wraps
 from config import config
 from models import db, Usuario, Prenda, RecargaWallet, RetiroWallet, MovimientoWallet, Mensaje, COMISION_PORCENTAJE
 from datetime import datetime
+from sqlalchemy import text, inspect as sa_inspect
 import os
 import cloudinary
 import cloudinary.uploader
@@ -25,6 +26,15 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+    # Migración: agregar columnas de cantidad si no existen
+    cols = [c['name'] for c in sa_inspect(db.engine).get_columns('prendas')]
+    with db.engine.connect() as conn:
+        if 'cantidad' not in cols:
+            conn.execute(text("ALTER TABLE prendas ADD COLUMN cantidad INTEGER NOT NULL DEFAULT 1"))
+            conn.commit()
+        if 'unidades_vendidas' not in cols:
+            conn.execute(text("ALTER TABLE prendas ADD COLUMN unidades_vendidas INTEGER NOT NULL DEFAULT 0"))
+            conn.commit()
     if not Usuario.query.filter_by(rol='admin').first():
         admin = Usuario(nombre='Admin', email=config.ADMIN_EMAIL, rol='admin')
         admin.set_password(config.ADMIN_PASSWORD)
@@ -351,7 +361,8 @@ def vendedor_dashboard():
         vendedor=vendedor,
         prendas=prendas,
         disponibles=sum(1 for p in prendas if not p.vendido),
-        vendidas=sum(1 for p in prendas if p.vendido)
+        vendidas=sum(1 for p in prendas if p.vendido),
+        total_vendidas=sum(p.unidades_vendidas for p in prendas)
     )
 
 @app.route('/mi-tienda/agregar', methods=['GET', 'POST'])
@@ -373,6 +384,7 @@ def vendedor_agregar():
             categoria       = request.form['categoria'],
             estado          = request.form['estado'],
             imagen          = imagen,
+            cantidad        = max(1, int(request.form.get('cantidad', 1))),
             destacado       = 'destacado' in request.form
         )
         db.session.add(prenda)
@@ -391,13 +403,17 @@ def vendedor_editar(id):
         nueva_imagen = guardar_archivo(request.files.get('imagen'))
         if nueva_imagen:
             prenda.imagen = nueva_imagen
+        nueva_cantidad = max(0, int(request.form.get('cantidad', prenda.cantidad)))
         prenda.nombre          = request.form['nombre']
         prenda.descripcion     = request.form['descripcion']
         prenda.precio_vendedor = float(request.form['precio'])
         prenda.talla           = request.form.get('talla', '').strip()
         prenda.categoria       = request.form['categoria']
         prenda.estado          = request.form['estado']
+        prenda.cantidad        = nueva_cantidad
         prenda.destacado       = 'destacado' in request.form
+        if nueva_cantidad > 0 and prenda.vendido:
+            prenda.vendido = False
         db.session.commit()
         flash('✅ Artículo actualizado', 'success')
         return redirect(url_for('vendedor_dashboard'))
@@ -412,33 +428,42 @@ def vendedor_vender(id):
     if prenda.vendedor_id != vendedor.id:
         return redirect(url_for('vendedor_dashboard'))
 
-    if not prenda.vendido:
-        comision = prenda.monto_comision
-        if vendedor.wallet_saldo < comision:
-            flash(f'Saldo insuficiente para cubrir la comisión (${comision:.2f}). Recarga tu wallet.', 'error')
-            return redirect(url_for('vendedor_dashboard'))
+    if prenda.cantidad <= 0:
+        flash('Este artículo ya no tiene stock. Edítalo para agregar más unidades.', 'error')
+        return redirect(url_for('vendedor_dashboard'))
 
-        prenda.vendido        = True
-        vendedor.wallet_saldo = round(vendedor.wallet_saldo - comision, 2)
+    comision = prenda.monto_comision
+    if vendedor.wallet_saldo < comision:
+        flash(f'Saldo insuficiente para cubrir la comisión (${comision:.2f}). Recarga tu wallet.', 'error')
+        return redirect(url_for('vendedor_dashboard'))
 
-        mov = MovimientoWallet(
-            vendedor_id = vendedor.id,
-            tipo        = 'comision',
-            monto       = -comision,
-            descripcion = f'Comisión 10% por venta de "{prenda.nombre}"'
-        )
-        db.session.add(mov)
+    prenda.cantidad          -= 1
+    prenda.unidades_vendidas += 1
+    vendedor.wallet_saldo     = round(vendedor.wallet_saldo - comision, 2)
 
-        if vendedor.wallet_saldo <= 0:
-            vendedor.wallet_saldo = 0
-            flash(f'⚠️ Prenda marcada como vendida. Tu wallet llegó a $0 — recarga para seguir vendiendo.', 'warning')
-        else:
-            flash(f'✅ Vendida. Comisión descontada: ${comision:.2f}. Saldo restante: ${vendedor.wallet_saldo:.2f}', 'success')
-    else:
-        prenda.vendido = False
-        flash('Prenda marcada como disponible', 'success')
+    if prenda.cantidad <= 0:
+        prenda.cantidad = 0
+        prenda.vendido  = True
 
+    if vendedor.wallet_saldo < 0:
+        vendedor.wallet_saldo = 0
+
+    mov = MovimientoWallet(
+        vendedor_id = vendedor.id,
+        tipo        = 'comision',
+        monto       = -comision,
+        descripcion = f'Comisión 10% — "{prenda.nombre}" (unidad #{prenda.unidades_vendidas})'
+    )
+    db.session.add(mov)
     db.session.commit()
+
+    if prenda.vendido:
+        flash(f'✅ Venta registrada. Comisión: ${comision:.2f}. Stock agotado — edita el artículo para reabastecer.', 'warning')
+    elif vendedor.wallet_saldo <= 0:
+        flash(f'✅ Venta registrada. Quedan {prenda.cantidad} unidades. Wallet en $0 — recarga para seguir vendiendo.', 'warning')
+    else:
+        flash(f'✅ Venta registrada. Quedan {prenda.cantidad} unidades. Comisión: ${comision:.2f}.', 'success')
+
     return redirect(url_for('vendedor_dashboard'))
 
 @app.route('/mi-tienda/eliminar/<int:id>', methods=['POST'])

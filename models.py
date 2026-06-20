@@ -69,10 +69,12 @@ class Prenda(db.Model):
     talla            = db.Column(db.String(10), nullable=False)
     categoria        = db.Column(db.String(50), nullable=False)
     estado           = db.Column(db.String(20), nullable=False)
-    imagen           = db.Column(db.String(255), nullable=True)
-    vendido          = db.Column(db.Boolean, default=False)
-    destacado        = db.Column(db.Boolean, default=False)
-    creado_en        = db.Column(db.DateTime, default=datetime.utcnow)
+    imagen            = db.Column(db.String(255), nullable=True)
+    cantidad          = db.Column(db.Integer, default=1, nullable=False)
+    unidades_vendidas = db.Column(db.Integer, default=0, nullable=False)
+    vendido           = db.Column(db.Boolean, default=False)
+    destacado         = db.Column(db.Boolean, default=False)
+    creado_en         = db.Column(db.DateTime, default=datetime.utcnow)
 
     @property
     def precio_comprador(self):
