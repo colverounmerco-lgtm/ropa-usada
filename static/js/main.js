@@ -1,3 +1,10 @@
+// Registrar Service Worker (PWA)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
 // Ocultar alertas automáticamente después de 4 segundos
 document.querySelectorAll('.alerta').forEach(function(alerta) {
   setTimeout(function() {

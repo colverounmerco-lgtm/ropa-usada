@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, send_from_directory
 from functools import wraps
 from config import config
 from models import db, Usuario, Prenda, RecargaWallet, RetiroWallet, MovimientoWallet, Mensaje, COMISION_PORCENTAJE
@@ -90,6 +90,53 @@ def vars_globales():
             'banco_nombre': config.BANCO_NOMBRE, 'banco_cuenta': config.BANCO_CUENTA,
             'banco_titular': config.BANCO_TITULAR,
             'mensajes_no_leidos': mensajes_no_leidos}
+
+# ─── PWA ─────────────────────────────────────
+@app.route('/manifest.json')
+def pwa_manifest():
+    name = config.NOMBRE_TIENDA
+    short = name[:12] if len(name) > 12 else name
+    manifest = {
+        "name": name,
+        "short_name": short,
+        "description": f"Compra, vende y ofrece servicios en {name}",
+        "start_url": "/",
+        "scope": "/",
+        "display": "standalone",
+        "orientation": "portrait",
+        "background_color": "#1E3A5F",
+        "theme_color": "#1E3A5F",
+        "lang": "es-EC",
+        "categories": ["shopping", "business"],
+        "icons": [
+            {"src": "/static/icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable"},
+            {"src": "/static/icons/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"}
+        ]
+    }
+    from flask import make_response
+    resp = make_response(jsonify(manifest))
+    resp.headers['Content-Type'] = 'application/manifest+json'
+    return resp
+
+@app.route('/sw.js')
+def pwa_sw():
+    return send_from_directory('static', 'sw.js', mimetype='application/javascript')
+
+@app.route('/.well-known/assetlinks.json')
+def pwa_assetlinks():
+    package = os.getenv('TWA_PACKAGE', '')
+    fingerprint = os.getenv('TWA_FINGERPRINT', '')
+    if not package or not fingerprint:
+        return jsonify([])
+    links = [{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": package,
+            "sha256_cert_fingerprints": [fingerprint]
+        }
+    }]
+    return jsonify(links)
 
 # ─── RUTAS PÚBLICAS ───────────────────────────
 
