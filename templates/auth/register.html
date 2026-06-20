@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrarse — {{ nombre_tienda }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-gris">
+<div class="auth-container">
+  <a href="/" class="logo" style="display:block;text-align:center;margin-bottom:0.5rem">{{ nombre_tienda }}</a>
+  <h1 class="auth-titulo">Crear cuenta</h1>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}
+      <div class="alerta alerta-{{ cat }}">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <!-- Selector de rol -->
+  <div class="rol-selector">
+    <button type="button" class="rol-btn active" id="btn-comprador" onclick="seleccionarRol('comprador')">
+      🛍️ Quiero comprar
+    </button>
+    <button type="button" class="rol-btn" id="btn-vendedor" onclick="seleccionarRol('vendedor')">
+      👗 Quiero vender
+    </button>
+  </div>
+
+  <form method="POST" class="auth-form">
+    <input type="hidden" name="rol" id="rol-input" value="{{ request.args.get('rol', 'comprador') }}">
+
+    <div class="campo">
+      <label>Nombre completo *</label>
+      <input type="text" name="nombre" required placeholder="Tu nombre">
+    </div>
+    <div class="campo">
+      <label>Email *</label>
+      <input type="email" name="email" required placeholder="tu@email.com">
+    </div>
+    <div class="campo">
+      <label>Contraseña * (mínimo 6 caracteres)</label>
+      <input type="password" name="password" required minlength="6">
+    </div>
+
+    <!-- Campos solo para vendedores -->
+    <div id="campos-vendedor" style="display:none">
+      <div class="campo">
+        <label>Tu número de WhatsApp * <small>(con código de país, ej: 593987654321)</small></label>
+        <input type="text" name="whatsapp" placeholder="593987654321">
+      </div>
+      <div class="campo">
+        <label>Nombre de tu tienda <small>(opcional)</small></label>
+        <input type="text" name="tienda_nombre" placeholder="Ej: La Boutique de Ana">
+      </div>
+    </div>
+
+    <div class="campo campo-check">
+      <label class="check-label">
+        <input type="checkbox" name="terminos" required>
+        Acepto los <a href="/terminos" target="_blank" style="color:var(--color-primario);font-weight:600">Términos y Condiciones</a>
+        <span id="terminos-extra"></span>
+      </label>
+    </div>
+
+    <button type="submit" class="btn-primario w-full">Crear cuenta</button>
+  </form>
+
+  <p class="auth-link">¿Ya tienes cuenta? <a href="/login">Iniciar sesión</a></p>
+</div>
+
+<script>
+  const rolInicial = "{{ request.args.get('rol', 'comprador') }}";
+  seleccionarRol(rolInicial);
+
+  function seleccionarRol(rol) {
+    document.getElementById('rol-input').value = rol;
+    document.getElementById('campos-vendedor').style.display = rol === 'vendedor' ? 'block' : 'none';
+    document.getElementById('btn-comprador').classList.toggle('active', rol === 'comprador');
+    document.getElementById('btn-vendedor').classList.toggle('active', rol === 'vendedor');
+    document.getElementById('terminos-extra').textContent = rol === 'vendedor'
+      ? ' (incluyendo la comisión del 7% por venta)'
+      : '';
+  }
+</script>
+</body>
+</html>

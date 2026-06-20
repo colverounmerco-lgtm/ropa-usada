@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Usuarios — Admin{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:2rem">
+  <div class="page-header">
+    <h1 class="page-titulo">Usuarios</h1>
+    <a href="/admin" class="btn-outline">← Dashboard</a>
+  </div>
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead>
+        <tr><th>Nombre</th><th>Email</th><th>Rol</th><th>WhatsApp</th><th>Tienda</th><th>Registro</th><th>Estado</th><th>Acción</th></tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+        <tr class="{% if not u.activo %}fila-vendida{% endif %}">
+          <td><strong>{{ u.nombre }}</strong></td>
+          <td>{{ u.email }}</td>
+          <td><span class="tag">{{ u.rol }}</span></td>
+          <td>{{ u.whatsapp or '—' }}</td>
+          <td>{{ u.tienda_nombre or '—' }}</td>
+          <td>{{ u.creado_en.strftime('%d/%m/%Y') }}</td>
+          <td>{% if u.activo %}<span class="badge-disponible">Activo</span>{% else %}<span class="badge-vendido">Inactivo</span>{% endif %}</td>
+          <td>
+            <form method="POST" action="/admin/usuarios/toggle/{{ u.id }}" style="display:inline">
+              <button class="btn-accion {% if u.activo %}btn-vender{% else %}btn-disponible{% endif %}">
+                {% if u.activo %}Desactivar{% else %}Activar{% endif %}
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Términos de uso — {{ nombre_tienda }}{% endblock %}
+{% block contenido %}
+<section class="seccion">
+  <div class="contenedor" style="max-width: 800px">
+    <h1 style="font-size:1.75rem; font-weight:700; margin-bottom:0.5rem">Términos y Condiciones de Uso</h1>
+    <p style="color:#6B7280; margin-bottom:2rem">{{ nombre_tienda }} · Última actualización: 2025</p>
+
+    <div class="terminos-contenido">
+
+      <div class="termino-seccion">
+        <h2>1. Aceptación</h2>
+        <p>Al registrarte en {{ nombre_tienda }}, aceptas cumplir estos términos. Si no estás de acuerdo, no uses la plataforma.</p>
+      </div>
+
+      <div class="termino-seccion">
+        <h2>2. Tipos de cuenta</h2>
+        <p><strong>Comprador:</strong> Puede navegar el catálogo y contactar vendedores vía WhatsApp para adquirir prendas.</p>
+        <p><strong>Vendedor:</strong> Puede publicar prendas usadas para su venta. Al registrarse como vendedor, acepta explícitamente las condiciones de comisión descritas en el punto 3.</p>
+      </div>
+
+      <div class="termino-seccion destacado">
+        <h2>3. Comisión de la plataforma (Vendedores)</h2>
+        <p>{{ nombre_tienda }} cobra una <strong>comisión del 7%</strong> sobre el precio de venta de cada prenda vendida.</p>
+        <ul>
+          <li>El precio que el comprador ve en la plataforma ya incluye el 7% de comisión.</li>
+          <li>Ejemplo: Si publicas una prenda a <strong>$10.00</strong>, el comprador verá <strong>$10.70</strong>. Tu ganancia es $10.00 y la comisión de la plataforma es $0.70.</li>
+          <li>Cuando marques una prenda como vendida, el sistema registrará la comisión pendiente.</li>
+          <li>Debes pagar la comisión al administrador de la plataforma dentro de los <strong>5 días hábiles</strong> siguientes a la venta.</li>
+          <li>El incumplimiento del pago puede resultar en la <strong>suspensión de tu cuenta</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="termino-seccion">
+        <h2>4. Prendas permitidas</h2>
+        <ul>
+          <li>Solo se permiten prendas de ropa, calzado y accesorios usados en buen estado.</li>
+          <li>Las fotos deben ser reales y representar el estado actual de la prenda.</li>
+          <li>Los precios deben ser justos y coherentes con el estado de la prenda.</li>
+          <li>Queda prohibido publicar artículos falsos, robados o en mal estado.</li>
+        </ul>
+      </div>
+
+      <div class="termino-seccion">
+        <h2>5. Responsabilidad</h2>
+        <p>{{ nombre_tienda }} es una plataforma intermediaria. Las transacciones se realizan directamente entre compradores y vendedores vía WhatsApp. La plataforma no se responsabiliza por disputas entre usuarios, pero puede suspender cuentas ante incumplimientos.</p>
+      </div>
+
+      <div class="termino-seccion">
+        <h2>6. Suspensión de cuenta</h2>
+        <p>El administrador puede suspender o eliminar cuentas en los siguientes casos:</p>
+        <ul>
+          <li>Impago de comisiones</li>
+          <li>Publicación de artículos falsos o engañosos</li>
+          <li>Comportamiento inapropiado hacia otros usuarios</li>
+          <li>Cualquier incumplimiento de estos términos</li>
+        </ul>
+      </div>
+
+      <div class="termino-seccion">
+        <h2>7. Modificaciones</h2>
+        <p>{{ nombre_tienda }} se reserva el derecho de modificar estos términos en cualquier momento. Los cambios serán notificados a través de la plataforma.</p>
+      </div>
+
+    </div>
+
+    <div style="margin-top:2rem; text-align:center">
+      <a href="/register" class="btn-primario">← Volver al registro</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

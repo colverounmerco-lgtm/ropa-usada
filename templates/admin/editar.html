@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar prenda — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="contenedor header-inner">
+      <a href="/admin" class="logo">← Volver al dashboard</a>
+    </div>
+  </header>
+
+  <div class="contenedor form-container">
+    <h1 class="form-titulo">Editar prenda</h1>
+
+    <form method="POST" enctype="multipart/form-data" class="form-prenda">
+
+      <div class="campo">
+        <label>Nombre de la prenda *</label>
+        <input type="text" name="nombre" value="{{ prenda.nombre }}" required>
+      </div>
+
+      <div class="campo">
+        <label>Descripción *</label>
+        <textarea name="descripcion" rows="4" required>{{ prenda.descripcion }}</textarea>
+      </div>
+
+      <div class="campos-fila">
+        <div class="campo">
+          <label>Precio ($) *</label>
+          <input type="number" name="precio" value="{{ prenda.precio }}" min="0.50" step="0.50" required>
+        </div>
+        <div class="campo">
+          <label>Talla *</label>
+          <select name="talla" required>
+            {% for t in ['XS','S','M','L','XL','XXL','Única','34','36','38','40','42','44'] %}
+              <option {% if prenda.talla == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="campos-fila">
+        <div class="campo">
+          <label>Categoría *</label>
+          <select name="categoria" required>
+            {% for cat in ['Blusas','Camisas','Pantalones','Vestidos','Faldas','Abrigos','Chaquetas','Zapatos','Bolsos','Accesorios','Ropa deportiva','Otros'] %}
+              <option {% if prenda.categoria == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="campo">
+          <label>Estado *</label>
+          <select name="estado" required>
+            {% for e in ['Excelente','Muy bueno','Bueno'] %}
+              <option {% if prenda.estado == e %}selected{% endif %}>{{ e }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label>Foto actual</label>
+        <img src="{{ prenda.imagen_url }}" alt="{{ prenda.nombre }}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:0.5rem">
+        <label>Cambiar foto (opcional)</label>
+        <input type="file" name="imagen" accept="image/*">
+      </div>
+
+      <div class="campo campo-check">
+        <label class="check-label">
+          <input type="checkbox" name="destacado" {% if prenda.destacado %}checked{% endif %}>
+          ⭐ Marcar como prenda destacada
+        </label>
+      </div>
+
+      <div class="form-acciones">
+        <a href="/admin" class="btn-secundario">Cancelar</a>
+        <button type="submit" class="btn-primario">Guardar cambios</button>
+      </div>
+
+    </form>
+  </div>
+</body>
+</html>

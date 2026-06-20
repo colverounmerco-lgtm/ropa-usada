@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Mi Wallet — {{ nombre_tienda }}{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:2rem; max-width:900px">
+
+  <div class="page-header">
+    <h1 class="page-titulo">Mi Wallet</h1>
+    <div style="display:flex;gap:1rem">
+      <a href="/wallet/recargar" class="btn-primario">+ Recargar</a>
+      <a href="/wallet/retirar" class="btn-outline">Solicitar retiro</a>
+      <a href="/mi-tienda" class="btn-secundario">← Mi tienda</a>
+    </div>
+  </div>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+
+  <!-- Saldo actual -->
+  <div class="wallet-saldo-card {% if vendedor.wallet_saldo <= 0 %}wallet-vacio{% endif %}">
+    <div>
+      <p class="wallet-label">Saldo disponible</p>
+      <p class="wallet-monto">${{ "%.2f"|format(vendedor.wallet_saldo) }}</p>
+    </div>
+    {% if vendedor.wallet_saldo <= 0 %}
+      <div class="wallet-alerta">⚠️ Sin saldo — tus prendas no aparecen en el catálogo. Recarga para seguir vendiendo.</div>
+    {% elif vendedor.wallet_saldo < 1 %}
+      <div class="wallet-alerta">⚠️ Saldo bajo — recarga pronto para no interrumpir tus ventas.</div>
+    {% else %}
+      <div class="wallet-ok">✅ Activo — tus prendas están visibles en el catálogo.</div>
+    {% endif %}
+  </div>
+
+  <!-- Movimientos -->
+  <h2 style="font-size:1.1rem;font-weight:700;margin:2rem 0 1rem">Historial de movimientos</h2>
+  {% if movimientos %}
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead><tr><th>Fecha</th><th>Descripción</th><th>Monto</th></tr></thead>
+      <tbody>
+        {% for m in movimientos %}
+        <tr>
+          <td>{{ m.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+          <td>{{ m.descripcion }}</td>
+          <td class="{% if m.monto > 0 %}monto-positivo{% else %}monto-negativo{% endif %}">
+            {% if m.monto > 0 %}+{% endif %}${{ "%.2f"|format(m.monto|abs) }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p style="color:#6B7280;text-align:center;padding:2rem">No hay movimientos aún.</p>
+  {% endif %}
+
+  <!-- Recargas -->
+  <h2 style="font-size:1.1rem;font-weight:700;margin:2rem 0 1rem">Mis recargas</h2>
+  {% if recargas %}
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead><tr><th>Fecha</th><th>Monto</th><th>Estado</th><th>Nota</th></tr></thead>
+      <tbody>
+        {% for r in recargas %}
+        <tr>
+          <td>{{ r.fecha_solicitud.strftime('%d/%m/%Y') }}</td>
+          <td><strong>${{ "%.2f"|format(r.monto) }}</strong></td>
+          <td>
+            {% if r.estado == 'aprobada' %}<span class="badge-disponible">✅ Aprobada</span>
+            {% elif r.estado == 'rechazada' %}<span class="badge-vendido">❌ Rechazada</span>
+            {% else %}<span class="badge-pendiente">⏳ Pendiente</span>{% endif %}
+          </td>
+          <td>{{ r.admin_nota or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- Retiros -->
+  <h2 style="font-size:1.1rem;font-weight:700;margin:2rem 0 1rem">Mis retiros</h2>
+  {% if retiros %}
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead><tr><th>Fecha</th><th>Monto</th><th>Estado</th><th>Nota</th></tr></thead>
+      <tbody>
+        {% for r in retiros %}
+        <tr>
+          <td>{{ r.fecha_solicitud.strftime('%d/%m/%Y') }}</td>
+          <td><strong>${{ "%.2f"|format(r.monto) }}</strong></td>
+          <td>
+            {% if r.estado == 'aprobado' %}<span class="badge-disponible">✅ Aprobado</span>
+            {% elif r.estado == 'rechazado' %}<span class="badge-vendido">❌ Rechazado</span>
+            {% else %}<span class="badge-pendiente">⏳ Pendiente</span>{% endif %}
+          </td>
+          <td>{{ r.admin_nota or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p style="color:#6B7280;text-align:center;padding:1rem">No hay retiros solicitados.</p>
+  {% endif %}
+
+</div>
+{% endblock %}

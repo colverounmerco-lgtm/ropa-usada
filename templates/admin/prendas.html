@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Prendas — Admin{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:2rem">
+  <div class="page-header">
+    <h1 class="page-titulo">Todas las prendas</h1>
+    <a href="/admin" class="btn-outline">← Dashboard</a>
+  </div>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead>
+        <tr><th>Foto</th><th>Nombre</th><th>Vendedor</th><th>Precio vendedor</th><th>Precio comprador</th><th>Estado</th><th>Acción</th></tr>
+      </thead>
+      <tbody>
+        {% for p in prendas %}
+        <tr class="{% if p.vendido %}fila-vendida{% endif %}">
+          <td><img src="{{ p.imagen_url }}" class="tabla-foto"></td>
+          <td><strong>{{ p.nombre }}</strong></td>
+          <td>{{ p.vendedor.nombre }}</td>
+          <td>${{ "%.2f"|format(p.precio_vendedor) }}</td>
+          <td>${{ "%.2f"|format(p.precio_comprador) }}</td>
+          <td>{% if p.vendido %}<span class="badge-vendido">VENDIDO</span>{% else %}<span class="badge-disponible">Disponible</span>{% endif %}</td>
+          <td>
+            <form method="POST" action="/admin/prendas/eliminar/{{ p.id }}" style="display:inline"
+                  onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
+              <button class="btn-accion btn-eliminar">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Recargas Wallet — Admin{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:2rem">
+  <div class="page-header">
+    <h1 class="page-titulo">Recargas de Wallet</h1>
+    <a href="/admin" class="btn-outline">← Dashboard</a>
+  </div>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead>
+        <tr><th>Vendedor</th><th>Monto</th><th>Comprobante</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        {% for r in recargas %}
+        <tr class="{% if r.estado != 'pendiente' %}fila-vendida{% endif %}">
+          <td><strong>{{ r.vendedor.nombre }}</strong><br><small>{{ r.vendedor.email }}</small><br><small>Saldo actual: ${{ "%.2f"|format(r.vendedor.wallet_saldo) }}</small></td>
+          <td><strong>${{ "%.2f"|format(r.monto) }}</strong></td>
+          <td>
+            <a href="/static/uploads/{{ r.comprobante }}" target="_blank" class="btn-accion btn-editar">Ver comprobante</a>
+          </td>
+          <td>{{ r.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</td>
+          <td>
+            {% if r.estado == 'aprobada' %}<span class="badge-disponible">✅ Aprobada</span>
+            {% elif r.estado == 'rechazada' %}<span class="badge-vendido">❌ Rechazada</span>
+            {% else %}<span class="badge-pendiente">⏳ Pendiente</span>{% endif %}
+          </td>
+          <td>
+            {% if r.estado == 'pendiente' %}
+            <form method="POST" action="/admin/recargas/aprobar/{{ r.id }}" style="display:inline">
+              <button class="btn-accion btn-disponible">✅ Aprobar</button>
+            </form>
+            <form method="POST" action="/admin/recargas/rechazar/{{ r.id }}" style="display:inline">
+              <input type="hidden" name="nota" value="Comprobante inválido">
+              <button class="btn-accion btn-eliminar">❌ Rechazar</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

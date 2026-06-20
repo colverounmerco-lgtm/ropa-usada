@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Recargar Wallet — {{ nombre_tienda }}{% endblock %}
+{% block contenido %}
+<div class="contenedor form-container">
+  <a href="/wallet" class="btn-volver">← Volver a mi wallet</a>
+  <h1 class="form-titulo">Recargar Wallet</h1>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+
+  <!-- Datos bancarios -->
+  <div class="info-banco">
+    <h2>📋 Datos para la transferencia</h2>
+    <div class="banco-datos">
+      <div class="banco-fila"><span>Banco:</span><strong>{{ banco_nombre }}</strong></div>
+      <div class="banco-fila"><span>Número de cuenta:</span><strong>{{ banco_cuenta }}</strong></div>
+      <div class="banco-fila"><span>Titular:</span><strong>{{ banco_titular }}</strong></div>
+      <div class="banco-fila"><span>Monto mínimo:</span><strong>$1.00</strong></div>
+    </div>
+    <p class="banco-nota">Realiza la transferencia, toma una foto o captura del comprobante, y completa el formulario a continuación.</p>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" class="form-prenda">
+    <div class="campo">
+      <label>Monto transferido ($) *</label>
+      <input type="number" name="monto" min="1" step="0.01" placeholder="1.00" required>
+    </div>
+    <div class="campo">
+      <label>Comprobante de transferencia * <small>(foto, captura de pantalla o PDF)</small></label>
+      <input type="file" name="comprobante" accept="image/*,.pdf" required id="input-comp">
+      <div id="preview-comp" style="display:none;margin-top:0.5rem">
+        <img id="preview-img-comp" src="" style="max-width:300px;border-radius:8px">
+      </div>
+    </div>
+    <div class="form-acciones">
+      <a href="/wallet" class="btn-secundario">Cancelar</a>
+      <button type="submit" class="btn-primario">Enviar solicitud</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.getElementById('input-comp').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        document.getElementById('preview-img-comp').src = ev.target.result;
+        document.getElementById('preview-comp').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
+{% endblock %}

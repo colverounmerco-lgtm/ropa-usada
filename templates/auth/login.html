@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión — {{ nombre_tienda }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-gris">
+<div class="auth-container">
+  <a href="/" class="logo" style="display:block;text-align:center;margin-bottom:0.5rem">{{ nombre_tienda }}</a>
+  <h1 class="auth-titulo">Iniciar sesión</h1>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}
+      <div class="alerta alerta-{{ cat }}">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <form method="POST" class="auth-form">
+    <div class="campo">
+      <label>Email</label>
+      <input type="email" name="email" required placeholder="tu@email.com" autocomplete="email">
+    </div>
+    <div class="campo">
+      <label>Contraseña</label>
+      <input type="password" name="password" required autocomplete="current-password">
+    </div>
+    <button type="submit" class="btn-primario w-full">Entrar</button>
+  </form>
+
+  <p class="auth-link">¿No tienes cuenta? <a href="/register">Registrarse</a></p>
+  <p class="auth-link"><a href="/">← Volver a la tienda</a></p>
+</div>
+</body>
+</html>

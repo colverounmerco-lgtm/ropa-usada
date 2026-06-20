@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Catálogo — {{ nombre_tienda }}{% endblock %}
+{% block contenido %}
+
+<section class="hero">
+  <div class="contenedor">
+    <h1 class="hero-titulo">Ropa con historia,<br>estilo sin límites</h1>
+    <p class="hero-sub">Compra y vende ropa usada · Precios accesibles · Vendedores verificados</p>
+    {% if not usuario_actual %}
+    <div class="hero-botones">
+      <a href="/register?rol=comprador" class="btn-primario">Quiero comprar</a>
+      <a href="/register?rol=vendedor" class="btn-outline">Quiero vender</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <form class="filtros" method="GET" action="/">
+      <select name="categoria" class="filtro-select" onchange="this.form.submit()">
+        <option value="">Todas las categorías</option>
+        {% for cat in categorias %}
+          <option value="{{ cat }}" {% if filtro_categoria == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+      <select name="talla" class="filtro-select" onchange="this.form.submit()">
+        <option value="">Todas las tallas</option>
+        {% for t in tallas %}
+          <option value="{{ t }}" {% if filtro_talla == t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+      <select name="precio_max" class="filtro-select" onchange="this.form.submit()">
+        <option value="">Cualquier precio</option>
+        <option value="10" {% if filtro_precio_max == '10' %}selected{% endif %}>Hasta $10</option>
+        <option value="20" {% if filtro_precio_max == '20' %}selected{% endif %}>Hasta $20</option>
+        <option value="30" {% if filtro_precio_max == '30' %}selected{% endif %}>Hasta $30</option>
+        <option value="50" {% if filtro_precio_max == '50' %}selected{% endif %}>Hasta $50</option>
+      </select>
+      {% if filtro_categoria or filtro_talla or filtro_precio_max %}
+        <a href="/" class="btn-limpiar">✕ Limpiar</a>
+      {% endif %}
+    </form>
+
+    {% if prendas %}
+      <p class="resultado-count">{{ prendas|length }} prenda{% if prendas|length != 1 %}s{% endif %} disponible{% if prendas|length != 1 %}s{% endif %}</p>
+      <div class="grid-catalogo">
+        {% for prenda in prendas %}
+        <a href="/producto/{{ prenda.id }}" class="card">
+          <div class="card-imagen">
+            <img src="{{ prenda.imagen_url }}" alt="{{ prenda.nombre }}" loading="lazy">
+            {% if prenda.destacado %}<span class="badge-destacado">⭐ Destacado</span>{% endif %}
+          </div>
+          <div class="card-info">
+            <span class="card-categoria">{{ prenda.categoria }}</span>
+            <h3 class="card-nombre">{{ prenda.nombre }}</h3>
+            <p class="card-vendedor">{{ prenda.vendedor.tienda_nombre or prenda.vendedor.nombre }}</p>
+            <div class="card-footer">
+              <span class="card-precio">${{ "%.2f"|format(prenda.precio_comprador) }}</span>
+              <span class="card-talla">Talla {{ prenda.talla }}</span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="vacio">
+        <p>😔 No hay prendas disponibles con esos filtros</p>
+        <a href="/" class="btn-primario">Ver todo</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

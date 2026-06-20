@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ nombre_tienda }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="contenedor header-inner">
+      <a href="/" class="logo">{{ nombre_tienda }}</a>
+      <nav class="nav">
+        <a href="/" class="nav-link">Catálogo</a>
+        {% if usuario_actual %}
+          {% if usuario_actual.es_vendedor %}
+            <a href="/mi-tienda" class="nav-link">Mi tienda</a>
+          {% endif %}
+          {% if usuario_actual.es_admin %}
+            <a href="/admin" class="nav-link">Admin</a>
+          {% endif %}
+          <span class="nav-nombre">{{ usuario_actual.nombre }}</span>
+          <a href="/logout" class="btn-outline btn-sm">Salir</a>
+        {% else %}
+          <a href="/login" class="nav-link">Iniciar sesión</a>
+          <a href="/register" class="btn-primario btn-sm">Registrarse</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% if mensajes %}
+      <div class="contenedor">
+        {% for cat, msg in mensajes %}
+          <div class="alerta alerta-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>{% block contenido %}{% endblock %}</main>
+
+  <footer class="footer">
+    <div class="contenedor">
+      <p>© 2025 {{ nombre_tienda }} · Marketplace de ropa usada</p>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

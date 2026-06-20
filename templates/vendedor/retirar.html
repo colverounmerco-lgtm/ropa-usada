@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Solicitar Retiro — {{ nombre_tienda }}{% endblock %}
+{% block contenido %}
+<div class="contenedor form-container">
+  <a href="/wallet" class="btn-volver">← Volver a mi wallet</a>
+  <h1 class="form-titulo">Solicitar Retiro</h1>
+
+  <div class="wallet-saldo-card" style="margin-bottom:1.5rem">
+    <p class="wallet-label">Saldo disponible para retirar</p>
+    <p class="wallet-monto">${{ "%.2f"|format(vendedor.wallet_saldo) }}</p>
+  </div>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+
+  {% if vendedor.wallet_saldo >= 1 %}
+  <form method="POST" class="form-prenda">
+    <div class="campo">
+      <label>Monto a retirar ($) * <small>(mínimo $1.00, máximo ${{ "%.2f"|format(vendedor.wallet_saldo) }})</small></label>
+      <input type="number" name="monto" min="1" max="{{ vendedor.wallet_saldo }}" step="0.01" placeholder="1.00" required>
+    </div>
+    <div class="campo">
+      <label>Datos bancarios para la transferencia *</label>
+      <textarea name="datos_bancarios" rows="4" required
+        placeholder="Banco: Banco Pichincha&#10;Tipo de cuenta: Ahorros&#10;Número: 2200123456&#10;Titular: Tu Nombre"></textarea>
+    </div>
+    <div class="form-acciones">
+      <a href="/wallet" class="btn-secundario">Cancelar</a>
+      <button type="submit" class="btn-primario">Solicitar retiro</button>
+    </div>
+  </form>
+  {% else %}
+    <div class="vacio">
+      <p>No tienes saldo suficiente para retirar (mínimo $1.00)</p>
+      <a href="/wallet/recargar" class="btn-primario">Recargar wallet</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

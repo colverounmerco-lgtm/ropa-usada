@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Mi Tienda — {{ nombre_tienda }}{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:2rem">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-titulo">{{ vendedor.tienda_nombre or vendedor.nombre }}</h1>
+      <p class="page-sub">WhatsApp: {{ vendedor.whatsapp }}</p>
+    </div>
+    <a href="/mi-tienda/agregar" class="btn-primario">+ Agregar prenda</a>
+  </div>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+
+  <div class="stats-grid">
+    <div class="stat-card"><span class="stat-numero">{{ prendas|length }}</span><span class="stat-label">Total prendas</span></div>
+    <div class="stat-card stat-verde"><span class="stat-numero">{{ disponibles }}</span><span class="stat-label">Disponibles</span></div>
+    <div class="stat-card stat-rosa"><span class="stat-numero">{{ vendidas }}</span><span class="stat-label">Vendidas</span></div>
+    <div class="stat-card {% if vendedor.wallet_saldo <= 0 %}stat-rojo{% elif vendedor.wallet_saldo < 1 %}stat-amarillo{% else %}stat-verde{% endif %}">
+      <span class="stat-numero">${{ "%.2f"|format(vendedor.wallet_saldo) }}</span>
+      <span class="stat-label">Saldo Wallet</span>
+    </div>
+  </div>
+
+  {% if vendedor.wallet_saldo <= 0 %}
+  <div class="aviso-comision" style="border-color:#EF4444;background:#FEE2E2;color:#991B1B">
+    ⚠️ Tu wallet está en $0.00 — tus prendas <strong>no aparecen en el catálogo</strong>.
+    <a href="/wallet/recargar" style="color:#991B1B;font-weight:700;margin-left:0.5rem">Recargar ahora →</a>
+  </div>
+  {% elif vendedor.wallet_saldo < 2 %}
+  <div class="aviso-comision">
+    ⚠️ Saldo bajo (${{ "%.2f"|format(vendedor.wallet_saldo) }}). Recarga pronto para no interrumpir tus ventas.
+    <a href="/wallet/recargar" style="color:#92400E;font-weight:700;margin-left:0.5rem">Recargar →</a>
+  </div>
+  {% endif %}
+
+  <div style="display:flex;gap:1rem;margin-bottom:1.5rem">
+    <a href="/wallet" class="btn-outline btn-sm">💳 Ver mi wallet</a>
+    <a href="/wallet/recargar" class="btn-outline btn-sm">+ Recargar</a>
+  </div>
+
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead>
+        <tr><th>Foto</th><th>Nombre</th><th>Categoría</th><th>Talla</th><th>Tu precio</th><th>Precio comprador</th><th>Comisión</th><th>Estado</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        {% for prenda in prendas %}
+        <tr class="{% if prenda.vendido %}fila-vendida{% endif %}">
+          <td><img src="{{ prenda.imagen_url }}" class="tabla-foto"></td>
+          <td><strong>{{ prenda.nombre }}</strong>{% if prenda.destacado %} <span class="badge-mini">⭐</span>{% endif %}</td>
+          <td>{{ prenda.categoria }}</td>
+          <td>{{ prenda.talla }}</td>
+          <td>${{ "%.2f"|format(prenda.precio_vendedor) }}</td>
+          <td>${{ "%.2f"|format(prenda.precio_comprador) }}</td>
+          <td>${{ "%.2f"|format(prenda.monto_comision) }}
+            {% if prenda.comision %}
+              {% if prenda.comision.pagada %}<span class="badge-pagada">✅ Pagada</span>
+              {% else %}<span class="badge-pendiente">⏳ Pendiente</span>{% endif %}
+            {% endif %}
+          </td>
+          <td>{% if prenda.vendido %}<span class="badge-vendido">VENDIDO</span>{% else %}<span class="badge-disponible">Disponible</span>{% endif %}</td>
+          <td class="acciones">
+            <a href="/mi-tienda/editar/{{ prenda.id }}" class="btn-accion btn-editar">Editar</a>
+            <form method="POST" action="/mi-tienda/vender/{{ prenda.id }}" style="display:inline">
+              <button class="btn-accion {% if prenda.vendido %}btn-disponible{% else %}btn-vender{% endif %}">
+                {% if prenda.vendido %}Disponible{% else %}Vendido{% endif %}
+              </button>
+            </form>
+            <form method="POST" action="/mi-tienda/eliminar/{{ prenda.id }}" style="display:inline"
+                  onsubmit="return confirm('¿Eliminar {{ prenda.nombre }}?')">
+              <button class="btn-accion btn-eliminar">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" style="text-align:center;padding:2rem;color:#6B7280">No tienes prendas aún. <a href="/mi-tienda/agregar">Agrega tu primera prenda</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
