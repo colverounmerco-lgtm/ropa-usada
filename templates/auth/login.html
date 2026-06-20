@@ -1,16 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar sesiÃ³n â€” {{ nombre_tienda }}</title>
+  <title>Iniciar sesión — {{ nombre_tienda }}</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body class="bg-gris">
 <div class="auth-container">
   <a href="/" class="logo" style="display:block;text-align:center;margin-bottom:0.5rem">{{ nombre_tienda }}</a>
-  <h1 class="auth-titulo">Iniciar sesiÃ³n</h1>
+  <h1 class="auth-titulo">Iniciar sesión</h1>
 
   {% with mensajes = get_flashed_messages(with_categories=true) %}
     {% for cat, msg in mensajes %}
@@ -24,14 +24,14 @@
       <input type="email" name="email" required placeholder="tu@email.com" autocomplete="email">
     </div>
     <div class="campo">
-      <label>ContraseÃ±a</label>
+      <label>Contraseña</label>
       <input type="password" name="password" required autocomplete="current-password">
     </div>
     <button type="submit" class="btn-primario w-full">Entrar</button>
   </form>
 
-  <p class="auth-link">Â¿No tienes cuenta? <a href="/register">Registrarse</a></p>
-  <p class="auth-link"><a href="/">â† Volver a la tienda</a></p>
+  <p class="auth-link">¿No tienes cuenta? <a href="/register">Registrarse</a></p>
+  <p class="auth-link"><a href="/">← Volver a la tienda</a></p>
 </div>
 </body>
 </html>

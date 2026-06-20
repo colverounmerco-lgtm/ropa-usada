@@ -1,32 +1,32 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agregar prenda â€” Admin</title>
+  <title>Agregar artículo — Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
   <header class="header">
     <div class="contenedor header-inner">
-      <a href="/admin" class="logo">â† Volver al dashboard</a>
+      <a href="/admin" class="logo">← Volver al dashboard</a>
     </div>
   </header>
 
   <div class="contenedor form-container">
-    <h1 class="form-titulo">Agregar nueva prenda</h1>
+    <h1 class="form-titulo">Agregar nuevo artículo</h1>
 
     <form method="POST" enctype="multipart/form-data" class="form-prenda">
 
       <div class="campo">
-        <label>Nombre de la prenda *</label>
+        <label>Nombre del artículo *</label>
         <input type="text" name="nombre" placeholder="Ej: Vestido floral azul" required>
       </div>
 
       <div class="campo">
-        <label>DescripciÃ³n *</label>
-        <textarea name="descripcion" rows="4" placeholder="Describe la prenda: material, detalles, estado..." required></textarea>
+        <label>Descripción *</label>
+        <textarea name="descripcion" rows="4" placeholder="Describe el artículo: material, detalles, estado..." required></textarea>
       </div>
 
       <div class="campos-fila">
@@ -35,12 +35,12 @@
           <input type="number" name="precio" min="0.50" step="0.50" placeholder="15.00" required>
         </div>
         <div class="campo">
-          <label>Talla *</label>
-          <select name="talla" required>
-            <option value="">Seleccionar</option>
+          <label>Talla <small>(opcional)</small></label>
+          <select name="talla">
+            <option value="">Sin talla</option>
             <option>XS</option><option>S</option><option>M</option>
             <option>L</option><option>XL</option><option>XXL</option>
-            <option>Ãšnica</option>
+            <option>Única</option>
             <option>34</option><option>36</option><option>38</option>
             <option>40</option><option>42</option><option>44</option>
           </select>
@@ -49,19 +49,20 @@
 
       <div class="campos-fila">
         <div class="campo">
-          <label>CategorÃ­a *</label>
+          <label>Categoría *</label>
           <select name="categoria" required>
             <option value="">Seleccionar</option>
-            <option>Blusas</option><option>Camisas</option><option>Pantalones</option>
-            <option>Vestidos</option><option>Faldas</option><option>Abrigos</option>
-            <option>Chaquetas</option><option>Zapatos</option><option>Bolsos</option>
-            <option>Accesorios</option><option>Ropa deportiva</option><option>Otros</option>
+            <option>Ropa</option><option>Calzado</option><option>Electrónica</option>
+            <option>Hogar</option><option>Deportes</option><option>Juguetes</option>
+            <option>Libros</option><option>Vehículos</option><option>Herramientas</option>
+            <option>Accesorios</option><option>Otros</option>
           </select>
         </div>
         <div class="campo">
           <label>Estado *</label>
           <select name="estado" required>
             <option value="">Seleccionar</option>
+            <option>Nuevo</option>
             <option>Excelente</option>
             <option>Muy bueno</option>
             <option>Bueno</option>
@@ -70,7 +71,7 @@
       </div>
 
       <div class="campo">
-        <label>Foto de la prenda</label>
+        <label>Foto del artículo</label>
         <input type="file" name="imagen" accept="image/*" id="input-imagen">
         <div class="preview-imagen" id="preview" style="display:none">
           <img id="preview-img" src="" alt="Vista previa">
@@ -80,13 +81,13 @@
       <div class="campo campo-check">
         <label class="check-label">
           <input type="checkbox" name="destacado">
-          â­ Marcar como prenda destacada (aparece primero en el catÃ¡logo)
+          ⭐ Marcar como artículo destacado (aparece primero en el catálogo)
         </label>
       </div>
 
       <div class="form-acciones">
         <a href="/admin" class="btn-secundario">Cancelar</a>
-        <button type="submit" class="btn-primario">Agregar prenda</button>
+        <button type="submit" class="btn-primario">Agregar artículo</button>
       </div>
 
     </form>

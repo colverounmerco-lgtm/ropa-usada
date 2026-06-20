@@ -1,31 +1,31 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editar prenda â€” Admin</title>
+  <title>Editar artículo — Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
   <header class="header">
     <div class="contenedor header-inner">
-      <a href="/admin" class="logo">â† Volver al dashboard</a>
+      <a href="/admin" class="logo">← Volver al dashboard</a>
     </div>
   </header>
 
   <div class="contenedor form-container">
-    <h1 class="form-titulo">Editar prenda</h1>
+    <h1 class="form-titulo">Editar artículo</h1>
 
     <form method="POST" enctype="multipart/form-data" class="form-prenda">
 
       <div class="campo">
-        <label>Nombre de la prenda *</label>
+        <label>Nombre del artículo *</label>
         <input type="text" name="nombre" value="{{ prenda.nombre }}" required>
       </div>
 
       <div class="campo">
-        <label>DescripciÃ³n *</label>
+        <label>Descripción *</label>
         <textarea name="descripcion" rows="4" required>{{ prenda.descripcion }}</textarea>
       </div>
 
@@ -35,10 +35,12 @@
           <input type="number" name="precio" value="{{ prenda.precio }}" min="0.50" step="0.50" required>
         </div>
         <div class="campo">
-          <label>Talla *</label>
-          <select name="talla" required>
-            {% for t in ['XS','S','M','L','XL','XXL','Ãšnica','34','36','38','40','42','44'] %}
-              <option {% if prenda.talla == t %}selected{% endif %}>{{ t }}</option>
+          <label>Talla <small>(opcional)</small></label>
+          <select name="talla">
+            {% for t in ['','XS','S','M','L','XL','XXL','Única','34','36','38','40','42','44'] %}
+              <option value="{{ t }}" {% if prenda.talla == t %}selected{% endif %}>
+                {% if t == '' %}Sin talla{% else %}{{ t }}{% endif %}
+              </option>
             {% endfor %}
           </select>
         </div>
@@ -46,9 +48,9 @@
 
       <div class="campos-fila">
         <div class="campo">
-          <label>CategorÃ­a *</label>
+          <label>Categoría *</label>
           <select name="categoria" required>
-            {% for cat in ['Blusas','Camisas','Pantalones','Vestidos','Faldas','Abrigos','Chaquetas','Zapatos','Bolsos','Accesorios','Ropa deportiva','Otros'] %}
+            {% for cat in ['Ropa','Calzado','Electrónica','Hogar','Deportes','Juguetes','Libros','Vehículos','Herramientas','Accesorios','Otros'] %}
               <option {% if prenda.categoria == cat %}selected{% endif %}>{{ cat }}</option>
             {% endfor %}
           </select>
@@ -56,7 +58,7 @@
         <div class="campo">
           <label>Estado *</label>
           <select name="estado" required>
-            {% for e in ['Excelente','Muy bueno','Bueno'] %}
+            {% for e in ['Nuevo','Excelente','Muy bueno','Bueno'] %}
               <option {% if prenda.estado == e %}selected{% endif %}>{{ e }}</option>
             {% endfor %}
           </select>
@@ -73,7 +75,7 @@
       <div class="campo campo-check">
         <label class="check-label">
           <input type="checkbox" name="destacado" {% if prenda.destacado %}checked{% endif %}>
-          â­ Marcar como prenda destacada
+          ⭐ Marcar como artículo destacado
         </label>
       </div>
 

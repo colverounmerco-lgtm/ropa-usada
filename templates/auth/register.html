@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registrarse â€” {{ nombre_tienda }}</title>
+  <title>Registrarse — {{ nombre_tienda }}</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/styles.css">
 </head>
@@ -21,10 +21,10 @@
   <!-- Selector de rol -->
   <div class="rol-selector">
     <button type="button" class="rol-btn active" id="btn-comprador" onclick="seleccionarRol('comprador')">
-      ðŸ›ï¸ Quiero comprar
+      🛍️ Quiero comprar
     </button>
     <button type="button" class="rol-btn" id="btn-vendedor" onclick="seleccionarRol('vendedor')">
-      ðŸ‘— Quiero vender
+      🏪 Quiero vender
     </button>
   </div>
 
@@ -40,14 +40,14 @@
       <input type="email" name="email" required placeholder="tu@email.com">
     </div>
     <div class="campo">
-      <label>ContraseÃ±a * (mÃ­nimo 6 caracteres)</label>
+      <label>Contraseña * (mínimo 6 caracteres)</label>
       <input type="password" name="password" required minlength="6">
     </div>
 
     <!-- Campos solo para vendedores -->
     <div id="campos-vendedor" style="display:none">
       <div class="campo">
-        <label>Tu nÃºmero de WhatsApp * <small>(con cÃ³digo de paÃ­s, ej: 593987654321)</small></label>
+        <label>Tu número de WhatsApp * <small>(con código de país, ej: 593987654321)</small></label>
         <input type="text" name="whatsapp" placeholder="593987654321">
       </div>
       <div class="campo">
@@ -59,7 +59,7 @@
     <div class="campo campo-check">
       <label class="check-label">
         <input type="checkbox" name="terminos" required>
-        Acepto los <a href="/terminos" target="_blank" style="color:var(--color-primario);font-weight:600">TÃ©rminos y Condiciones</a>
+        Acepto los <a href="/terminos" target="_blank" style="color:var(--color-primario);font-weight:600">Términos y Condiciones</a>
         <span id="terminos-extra"></span>
       </label>
     </div>
@@ -67,7 +67,7 @@
     <button type="submit" class="btn-primario w-full">Crear cuenta</button>
   </form>
 
-  <p class="auth-link">Â¿Ya tienes cuenta? <a href="/login">Iniciar sesiÃ³n</a></p>
+  <p class="auth-link">¿Ya tienes cuenta? <a href="/login">Iniciar sesión</a></p>
 </div>
 
 <script>
@@ -80,7 +80,7 @@
     document.getElementById('btn-comprador').classList.toggle('active', rol === 'comprador');
     document.getElementById('btn-vendedor').classList.toggle('active', rol === 'vendedor');
     document.getElementById('terminos-extra').textContent = rol === 'vendedor'
-      ? ' (incluyendo la comisiÃ³n del 10% por venta)'
+      ? ' (incluyendo la comisión del 10% por venta)'
       : '';
   }
 </script>
