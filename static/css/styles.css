@@ -568,8 +568,8 @@ img { max-width: 100%; display: block; }
 /* ─── BOTÓN OUTLINE ─── */
 .btn-outline {
   display: inline-block;
-  border: 2px solid rgba(255,255,255,0.4);
-  color: rgba(255,255,255,0.9);
+  border: 2px solid var(--color-primario);
+  color: var(--color-primario);
   padding: 0.7rem 1.5rem;
   border-radius: var(--radio-md);
   font-weight: 600;
@@ -579,14 +579,20 @@ img { max-width: 100%; display: block; }
   cursor: pointer;
   background: transparent;
 }
-.btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.7); color: white; }
-.btn-outline.btn-sm {
-  padding: 0.4rem 1rem;
-  font-size: 0.8rem;
-  border-color: var(--color-borde);
-  color: var(--color-gris);
-}
+.btn-outline:hover { background: var(--color-acento-claro); border-color: var(--color-acento); color: var(--color-acento); }
+.btn-outline.btn-sm { padding: 0.4rem 1rem; font-size: 0.8rem; }
 .btn-outline.btn-sm:hover { border-color: var(--color-primario); color: var(--color-primario); background: var(--color-acento-claro); }
+
+/* Outline sobre fondo oscuro (hero) */
+.hero .btn-outline {
+  border-color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.9);
+}
+.hero .btn-outline:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.8);
+  color: white;
+}
 
 /* ─── PAGE HEADER ─── */
 .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--espacio-xl); flex-wrap: wrap; gap: var(--espacio-md); }
