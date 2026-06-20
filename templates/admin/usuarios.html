@@ -19,7 +19,7 @@
           <td><span class="tag">{{ u.rol }}</span></td>
           <td>{{ u.whatsapp or '—' }}</td>
           <td>{{ u.tienda_nombre or '—' }}</td>
-          <td>{{ u.creado_en.strftime('%d/%m/%Y') }}</td>
+          <td data-utc="{{ u.creado_en.strftime('%Y-%m-%dT%H:%M:%S') }}">{{ u.creado_en.strftime('%d/%m/%Y') }}</td>
           <td>{% if u.activo %}<span class="badge-disponible">Activo</span>{% else %}<span class="badge-vendido">Inactivo</span>{% endif %}</td>
           <td>
             <form method="POST" action="/admin/usuarios/toggle/{{ u.id }}" style="display:inline">

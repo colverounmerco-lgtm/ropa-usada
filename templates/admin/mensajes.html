@@ -26,7 +26,7 @@
           <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
             {{ c.ultimo.contenido[:60] }}{% if c.ultimo.contenido|length > 60 %}...{% endif %}
           </td>
-          <td>{{ c.ultimo.fecha.strftime('%d/%m %H:%M') }}</td>
+          <td data-utc="{{ c.ultimo.fecha.strftime('%Y-%m-%dT%H:%M:%S') }}">{{ c.ultimo.fecha.strftime('%d/%m %H:%M') }}</td>
           <td>
             <a href="/admin/mensajes/{{ c.usuario.id }}" class="btn-accion btn-editar">
               Ver {% if c.no_leidos > 0 %}<span class="badge-num">{{ c.no_leidos }}</span>{% endif %}

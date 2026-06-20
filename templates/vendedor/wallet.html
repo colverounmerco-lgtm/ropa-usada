@@ -40,7 +40,7 @@
       <tbody>
         {% for m in movimientos %}
         <tr>
-          <td>{{ m.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+          <td data-utc="{{ m.fecha.strftime('%Y-%m-%dT%H:%M:%S') }}">{{ m.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
           <td>{{ m.descripcion }}</td>
           <td class="{% if m.monto > 0 %}monto-positivo{% else %}monto-negativo{% endif %}">
             {% if m.monto > 0 %}+{% endif %}${{ "%.2f"|format(m.monto|abs) }}
@@ -63,7 +63,7 @@
       <tbody>
         {% for r in recargas %}
         <tr>
-          <td>{{ r.fecha_solicitud.strftime('%d/%m/%Y') }}</td>
+          <td data-utc="{{ r.fecha_solicitud.strftime('%Y-%m-%dT%H:%M:%S') }}">{{ r.fecha_solicitud.strftime('%d/%m/%Y') }}</td>
           <td><strong>${{ "%.2f"|format(r.monto) }}</strong></td>
           <td>
             {% if r.estado == 'aprobada' %}<span class="badge-disponible">✅ Aprobada</span>
@@ -87,7 +87,7 @@
       <tbody>
         {% for r in retiros %}
         <tr>
-          <td>{{ r.fecha_solicitud.strftime('%d/%m/%Y') }}</td>
+          <td data-utc="{{ r.fecha_solicitud.strftime('%Y-%m-%dT%H:%M:%S') }}">{{ r.fecha_solicitud.strftime('%d/%m/%Y') }}</td>
           <td><strong>${{ "%.2f"|format(r.monto) }}</strong></td>
           <td>
             {% if r.estado == 'aprobado' %}<span class="badge-disponible">✅ Aprobado</span>

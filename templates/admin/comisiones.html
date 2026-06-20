@@ -3,7 +3,7 @@
 {% block contenido %}
 <div class="contenedor" style="padding-top:2rem">
   <div class="page-header">
-    <h1 class="page-titulo">Comisiones (7%)</h1>
+    <h1 class="page-titulo">Comisiones (10%)</h1>
     <a href="/admin" class="btn-outline">← Dashboard</a>
   </div>
 
@@ -22,10 +22,10 @@
           <td><strong>{{ c.prenda.nombre }}</strong><br><small>${{ "%.2f"|format(c.prenda.precio_vendedor) }} (precio vendedor)</small></td>
           <td>{{ c.vendedor.nombre }}<br><small>{{ c.vendedor.email }}</small></td>
           <td><strong>${{ "%.2f"|format(c.monto) }}</strong></td>
-          <td>{{ c.fecha_venta.strftime('%d/%m/%Y %H:%M') }}</td>
+          <td data-utc="{{ c.fecha_venta.strftime('%Y-%m-%dT%H:%M:%S') }}">{{ c.fecha_venta.strftime('%d/%m/%Y %H:%M') }}</td>
           <td>
             {% if c.pagada %}
-              <span class="badge-pagada">✅ Cobrada el {{ c.fecha_pago.strftime('%d/%m/%Y') }}</span>
+              <span class="badge-pagada">✅ Cobrada el <span data-utc="{{ c.fecha_pago.strftime('%Y-%m-%dT%H:%M:%S') }}">{{ c.fecha_pago.strftime('%d/%m/%Y') }}</span></span>
             {% else %}
               <span class="badge-pendiente">⏳ Pendiente</span>
             {% endif %}

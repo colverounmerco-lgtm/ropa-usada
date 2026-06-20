@@ -51,6 +51,21 @@
   </footer>
 
   <script src="/static/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('[data-utc]').forEach(el => {
+        const raw = el.dataset.utc;
+        const utc = new Date(raw + 'Z');
+        const opts = raw.includes('T')
+          ? {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}
+          : {day:'2-digit', month:'2-digit', year:'numeric'};
+        const formatted = utc.toLocaleString('es', opts);
+        const inner = el.querySelector('.hora-ts');
+        if (inner) inner.textContent = formatted;
+        else el.textContent = formatted;
+      });
+    });
+  </script>
 
   {% if usuario_actual %}
   <a href="/chat" class="chat-flotante" title="Chat con soporte">

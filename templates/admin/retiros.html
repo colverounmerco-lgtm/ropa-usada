@@ -22,7 +22,7 @@
           <td><strong>{{ r.vendedor.nombre }}</strong><br><small>Saldo actual: ${{ "%.2f"|format(r.vendedor.wallet_saldo) }}</small></td>
           <td><strong>${{ "%.2f"|format(r.monto) }}</strong></td>
           <td><small style="white-space:pre-line">{{ r.datos_bancarios }}</small></td>
-          <td>{{ r.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</td>
+          <td data-utc="{{ r.fecha_solicitud.strftime('%Y-%m-%dT%H:%M:%S') }}">{{ r.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</td>
           <td>
             {% if r.estado == 'aprobado' %}<span class="badge-disponible">✅ Aprobado</span>
             {% elif r.estado == 'rechazado' %}<span class="badge-vendido">❌ Rechazado</span>

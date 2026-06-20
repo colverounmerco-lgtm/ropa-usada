@@ -24,7 +24,7 @@
           <td>
             <a href="{{ r.comprobante if r.comprobante.startswith('http') else '/static/uploads/' + r.comprobante }}" target="_blank" class="btn-accion btn-editar">Ver comprobante</a>
           </td>
-          <td>{{ r.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</td>
+          <td data-utc="{{ r.fecha_solicitud.strftime('%Y-%m-%dT%H:%M:%S') }}">{{ r.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</td>
           <td>
             {% if r.estado == 'aprobada' %}<span class="badge-disponible">✅ Aprobada</span>
             {% elif r.estado == 'rechazada' %}<span class="badge-vendido">❌ Rechazada</span>
