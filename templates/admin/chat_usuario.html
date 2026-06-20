@@ -33,6 +33,16 @@
 <script>
   const box = document.getElementById('chat-box');
   if (box) box.scrollTop = box.scrollHeight;
-  setTimeout(() => location.reload(), 15000);
+
+  function refreshIfIdle() {
+    const input = document.querySelector('.chat-input');
+    const isTyping = input && (input.value.trim() !== '' || document.activeElement === input);
+    if (isTyping) {
+      setTimeout(refreshIfIdle, 5000);
+    } else {
+      location.reload();
+    }
+  }
+  setTimeout(refreshIfIdle, 15000);
 </script>
 {% endblock %}
