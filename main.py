@@ -369,7 +369,7 @@ def vendedor_agregar():
             nombre          = request.form['nombre'],
             descripcion     = request.form['descripcion'],
             precio_vendedor = float(request.form['precio']),
-            talla           = request.form.get('talla', '').strip() or None,
+            talla           = request.form.get('talla', '').strip(),
             categoria       = request.form['categoria'],
             estado          = request.form['estado'],
             imagen          = imagen,
@@ -394,7 +394,7 @@ def vendedor_editar(id):
         prenda.nombre          = request.form['nombre']
         prenda.descripcion     = request.form['descripcion']
         prenda.precio_vendedor = float(request.form['precio'])
-        prenda.talla           = request.form.get('talla', '').strip() or None
+        prenda.talla           = request.form.get('talla', '').strip()
         prenda.categoria       = request.form['categoria']
         prenda.estado          = request.form['estado']
         prenda.destacado       = 'destacado' in request.form
