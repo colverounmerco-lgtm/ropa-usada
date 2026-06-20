@@ -149,7 +149,6 @@ def index():
     query = Prenda.query.join(Usuario).filter(
         Prenda.vendido == False,
         Usuario.activo == True,
-        Usuario.wallet_saldo > 0
     )
     if categoria:
         query = query.filter(Prenda.categoria == categoria)
@@ -163,9 +162,9 @@ def index():
 
     prendas    = query.order_by(Prenda.destacado.desc(), Prenda.creado_en.desc()).all()
     categorias = [c[0] for c in db.session.query(Prenda.categoria).join(Usuario).filter(
-        Prenda.vendido == False, Usuario.wallet_saldo > 0).distinct().all()]
+        Prenda.vendido == False, Usuario.activo == True).distinct().all()]
     tallas     = [t[0] for t in db.session.query(Prenda.talla).join(Usuario).filter(
-        Prenda.vendido == False, Usuario.wallet_saldo > 0).distinct().all()]
+        Prenda.vendido == False, Usuario.activo == True).distinct().all()]
 
     return render_template('index.html',
         prendas=prendas, categorias=categorias, tallas=tallas,
@@ -180,7 +179,7 @@ def producto(id):
         Prenda.categoria == prenda.categoria,
         Prenda.vendido == False,
         Prenda.id != id,
-        Usuario.wallet_saldo > 0
+        Usuario.activo == True
     ).limit(4).all()
     return render_template('producto.html', prenda=prenda, relacionadas=relacionadas)
 
@@ -229,8 +228,7 @@ def register():
         flash(f'¡Bienvenido/a {nombre}!', 'success')
 
         if rol == 'vendedor':
-            flash('Para comenzar a vender, recarga tu wallet con mínimo $1.00', 'info')
-            return redirect(url_for('wallet_recargar'))
+            return redirect(url_for('vendedor_tienda'))
         return redirect(url_for('index'))
 
     return render_template('auth/register.html')
@@ -358,10 +356,6 @@ def vendedor_dashboard():
 @vendedor_requerido
 def vendedor_agregar():
     vendedor = Usuario.query.get(session['usuario_id'])
-    if not vendedor.puede_vender:
-        flash('Necesitas saldo en tu wallet para publicar artículos.', 'error')
-        return redirect(url_for('wallet_recargar'))
-
     if request.method == 'POST':
         imagen = guardar_archivo(request.files.get('imagen'))
         prenda = Prenda(
