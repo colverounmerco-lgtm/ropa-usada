@@ -55,7 +55,7 @@ class Usuario(db.Model):
         return self.wallet_saldo > 0
 
 
-COMISION_PORCENTAJE = 0.07
+COMISION_PORCENTAJE = 0.10
 
 
 class Prenda(db.Model):

@@ -1,33 +1,28 @@
 {% extends "base.html" %}
-{% block title %}Agregar prenda — Mi Tienda{% endblock %}
+{% block title %}Publicar artículo — Mi Tienda{% endblock %}
 {% block contenido %}
 <div class="contenedor form-container">
   <a href="/mi-tienda" class="btn-volver">← Volver a mi tienda</a>
-  <h1 class="form-titulo">Agregar nueva prenda</h1>
+  <h1 class="form-titulo">Publicar nuevo artículo</h1>
 
   <form method="POST" enctype="multipart/form-data" class="form-prenda">
     <div class="campo">
-      <label>Nombre de la prenda *</label>
-      <input type="text" name="nombre" placeholder="Ej: Vestido floral azul" required>
+      <label>Título del anuncio *</label>
+      <input type="text" name="nombre" placeholder="Ej: iPhone 12, Clases de inglés, Sofá 3 puestos..." required>
     </div>
     <div class="campo">
       <label>Descripción *</label>
-      <textarea name="descripcion" rows="4" placeholder="Describe la prenda: material, detalles, motivo de venta..." required></textarea>
+      <textarea name="descripcion" rows="4" placeholder="Describe tu artículo o servicio con el mayor detalle posible..." required></textarea>
     </div>
     <div class="campos-fila">
       <div class="campo">
-        <label>Tu precio ($) * <small>El comprador verá este precio + 7%</small></label>
+        <label>Tu precio ($) * <small>El comprador verá este precio + 10%</small></label>
         <input type="number" name="precio" min="0.50" step="0.50" placeholder="15.00" required id="precio-input">
         <small class="precio-preview" id="precio-preview"></small>
       </div>
       <div class="campo">
-        <label>Talla *</label>
-        <select name="talla" required>
-          <option value="">Seleccionar</option>
-          {% for t in ['XS','S','M','L','XL','XXL','Única','34','36','38','40','42','44'] %}
-            <option>{{ t }}</option>
-          {% endfor %}
-        </select>
+        <label>Atributo <small>(talla, capacidad, año, duración...)</small></label>
+        <input type="text" name="talla" placeholder="Ej: Talla M, 64GB, 2023, Por hora, Único..." maxlength="50">
       </div>
     </div>
     <div class="campos-fila">
@@ -35,7 +30,7 @@
         <label>Categoría *</label>
         <select name="categoria" required>
           <option value="">Seleccionar</option>
-          {% for cat in ['Blusas','Camisas','Pantalones','Vestidos','Faldas','Abrigos','Chaquetas','Zapatos','Bolsos','Accesorios','Ropa deportiva','Otros'] %}
+          {% for cat in ['Servicios','Ropa y Moda','Accesorios','Electrónica','Hogar y Jardín','Vehículos','Deportes y Fitness','Juguetes y Bebés','Arte y Coleccionables','Mascotas','Inmuebles','Otros'] %}
             <option>{{ cat }}</option>
           {% endfor %}
         </select>
@@ -44,12 +39,16 @@
         <label>Estado *</label>
         <select name="estado" required>
           <option value="">Seleccionar</option>
-          <option>Excelente</option><option>Muy bueno</option><option>Bueno</option>
+          <option>Nuevo</option>
+          <option>Como nuevo</option>
+          <option>Buen estado</option>
+          <option>Estado regular</option>
+          <option>Servicio disponible</option>
         </select>
       </div>
     </div>
     <div class="campo">
-      <label>Foto de la prenda</label>
+      <label>Foto o imagen del artículo</label>
       <input type="file" name="imagen" accept="image/*" id="input-imagen">
       <div id="preview" style="display:none;margin-top:0.5rem">
         <img id="preview-img" src="" style="max-width:200px;border-radius:8px">
@@ -57,12 +56,12 @@
     </div>
     <div class="campo campo-check">
       <label class="check-label">
-        <input type="checkbox" name="destacado"> ⭐ Marcar como destacada (aparece primero)
+        <input type="checkbox" name="destacado"> ⭐ Marcar como destacado (aparece primero)
       </label>
     </div>
     <div class="form-acciones">
       <a href="/mi-tienda" class="btn-secundario">Cancelar</a>
-      <button type="submit" class="btn-primario">Publicar prenda</button>
+      <button type="submit" class="btn-primario">Publicar artículo</button>
     </div>
   </form>
 </div>
@@ -72,7 +71,7 @@
     const precio = parseFloat(this.value);
     const preview = document.getElementById('precio-preview');
     if (precio > 0) {
-      preview.textContent = `El comprador verá: $${(precio * 1.07).toFixed(2)} (incluye 7% de comisión)`;
+      preview.textContent = `El comprador verá: $${(precio * 1.10).toFixed(2)} (incluye 10% de comisión)`;
     } else {
       preview.textContent = '';
     }

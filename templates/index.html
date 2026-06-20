@@ -4,8 +4,8 @@
 
 <section class="hero">
   <div class="contenedor">
-    <h1 class="hero-titulo">Ropa con historia,<br>estilo sin límites</h1>
-    <p class="hero-sub">Compra y vende ropa usada · Precios accesibles · Vendedores verificados</p>
+    <h1 class="hero-titulo">Compra, vende y<br>ofrece servicios</h1>
+    <p class="hero-sub">Artículos · Accesorios · Servicios · Electrónica · y mucho más</p>
     {% if not usuario_actual %}
     <div class="hero-botones">
       <a href="/register?rol=comprador" class="btn-primario">Quiero comprar</a>
@@ -25,7 +25,7 @@
         {% endfor %}
       </select>
       <select name="talla" class="filtro-select" onchange="this.form.submit()">
-        <option value="">Todas las tallas</option>
+        <option value="">Todos los atributos</option>
         {% for t in tallas %}
           <option value="{{ t }}" {% if filtro_talla == t %}selected{% endif %}>{{ t }}</option>
         {% endfor %}
@@ -43,7 +43,7 @@
     </form>
 
     {% if prendas %}
-      <p class="resultado-count">{{ prendas|length }} prenda{% if prendas|length != 1 %}s{% endif %} disponible{% if prendas|length != 1 %}s{% endif %}</p>
+      <p class="resultado-count">{{ prendas|length }} artículo{% if prendas|length != 1 %}s{% endif %} disponible{% if prendas|length != 1 %}s{% endif %}</p>
       <div class="grid-catalogo">
         {% for prenda in prendas %}
         <a href="/producto/{{ prenda.id }}" class="card">
@@ -57,7 +57,7 @@
             <p class="card-vendedor">{{ prenda.vendedor.tienda_nombre or prenda.vendedor.nombre }}</p>
             <div class="card-footer">
               <span class="card-precio">${{ "%.2f"|format(prenda.precio_comprador) }}</span>
-              <span class="card-talla">Talla {{ prenda.talla }}</span>
+              {% if prenda.talla %}<span class="card-talla">{{ prenda.talla }}</span>{% endif %}
             </div>
           </div>
         </a>
@@ -65,7 +65,7 @@
       </div>
     {% else %}
       <div class="vacio">
-        <p>😔 No hay prendas disponibles con esos filtros</p>
+        <p>😔 No hay artículos disponibles con esos filtros</p>
         <a href="/" class="btn-primario">Ver todo</a>
       </div>
     {% endif %}

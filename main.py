@@ -110,7 +110,7 @@ def index():
         query = query.filter(Prenda.talla == talla)
     if precio_max:
         try:
-            query = query.filter(Prenda.precio_vendedor * 1.07 <= float(precio_max))
+            query = query.filter(Prenda.precio_vendedor * 1.10 <= float(precio_max))
         except ValueError:
             pass
 
@@ -312,7 +312,7 @@ def vendedor_dashboard():
 def vendedor_agregar():
     vendedor = Usuario.query.get(session['usuario_id'])
     if not vendedor.puede_vender:
-        flash('Necesitas saldo en tu wallet para publicar prendas.', 'error')
+        flash('Necesitas saldo en tu wallet para publicar artículos.', 'error')
         return redirect(url_for('wallet_recargar'))
 
     if request.method == 'POST':
@@ -322,7 +322,7 @@ def vendedor_agregar():
             nombre          = request.form['nombre'],
             descripcion     = request.form['descripcion'],
             precio_vendedor = float(request.form['precio']),
-            talla           = request.form['talla'],
+            talla           = request.form.get('talla', '').strip() or None,
             categoria       = request.form['categoria'],
             estado          = request.form['estado'],
             imagen          = imagen,
@@ -330,7 +330,7 @@ def vendedor_agregar():
         )
         db.session.add(prenda)
         db.session.commit()
-        flash('✅ Prenda publicada exitosamente', 'success')
+        flash('✅ Artículo publicado exitosamente', 'success')
         return redirect(url_for('vendedor_dashboard'))
     return render_template('vendedor/agregar.html')
 
@@ -347,12 +347,12 @@ def vendedor_editar(id):
         prenda.nombre          = request.form['nombre']
         prenda.descripcion     = request.form['descripcion']
         prenda.precio_vendedor = float(request.form['precio'])
-        prenda.talla           = request.form['talla']
+        prenda.talla           = request.form.get('talla', '').strip() or None
         prenda.categoria       = request.form['categoria']
         prenda.estado          = request.form['estado']
         prenda.destacado       = 'destacado' in request.form
         db.session.commit()
-        flash('✅ Prenda actualizada', 'success')
+        flash('✅ Artículo actualizado', 'success')
         return redirect(url_for('vendedor_dashboard'))
     return render_template('vendedor/editar.html', prenda=prenda)
 
@@ -378,7 +378,7 @@ def vendedor_vender(id):
             vendedor_id = vendedor.id,
             tipo        = 'comision',
             monto       = -comision,
-            descripcion = f'Comisión 7% por venta de "{prenda.nombre}"'
+            descripcion = f'Comisión 10% por venta de "{prenda.nombre}"'
         )
         db.session.add(mov)
 

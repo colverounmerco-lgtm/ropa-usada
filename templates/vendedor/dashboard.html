@@ -8,7 +8,7 @@
       <h1 class="page-titulo">{{ vendedor.tienda_nombre or vendedor.nombre }}</h1>
       <p class="page-sub">WhatsApp: {{ vendedor.whatsapp }}</p>
     </div>
-    <a href="/mi-tienda/agregar" class="btn-primario">+ Agregar prenda</a>
+    <a href="/mi-tienda/agregar" class="btn-primario">+ Publicar artículo</a>
   </div>
 
   {% with mensajes = get_flashed_messages(with_categories=true) %}
@@ -45,7 +45,7 @@
   <div class="tabla-container">
     <table class="tabla">
       <thead>
-        <tr><th>Foto</th><th>Nombre</th><th>Categoría</th><th>Talla</th><th>Tu precio</th><th>Precio comprador</th><th>Comisión</th><th>Estado</th><th>Acciones</th></tr>
+        <tr><th>Foto</th><th>Título</th><th>Categoría</th><th>Atributo</th><th>Tu precio</th><th>Precio comprador</th><th>Comisión</th><th>Estado</th><th>Acciones</th></tr>
       </thead>
       <tbody>
         {% for prenda in prendas %}
@@ -77,7 +77,7 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="9" style="text-align:center;padding:2rem;color:#6B7280">No tienes prendas aún. <a href="/mi-tienda/agregar">Agrega tu primera prenda</a></td></tr>
+        <tr><td colspan="9" style="text-align:center;padding:2rem;color:#6B7280">No tienes publicaciones aún. <a href="/mi-tienda/agregar">Publica tu primer artículo</a></td></tr>
         {% endfor %}
       </tbody>
     </table>

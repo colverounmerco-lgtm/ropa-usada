@@ -43,12 +43,12 @@ Desde el panel admin puedes gestionar:
 
 ---
 
-## 3. CÓMO COBRAR TU COMISIÓN DEL 7%
+## 3. CÓMO COBRAR TU COMISIÓN DEL 10%
 
 ### ¿Cómo funciona?
 - Cada vendedor debe tener saldo en su **wallet** para publicar prendas
-- Cuando marca una prenda como vendida, se descuenta automáticamente el **7% del precio** de su wallet
-- Ese 7% queda reflejado en los **movimientos de wallet** de cada vendedor
+- Cuando marca una prenda como vendida, se descuenta automáticamente el **10% del precio** de su wallet
+- Ese 10% queda reflejado en los **movimientos de wallet** de cada vendedor
 - Tú recibes ese dinero cuando el vendedor **recarga su wallet** (ya fue depositado en tu cuenta bancaria)
 
 ### Flujo de dinero
@@ -57,7 +57,7 @@ Vendedor hace transferencia a tu cuenta bancaria
 → Sube comprobante en la app
 → TÚ apruebas la recarga
 → El saldo entra al wallet del vendedor
-→ Cada venta descuenta el 7% del wallet
+→ Cada venta descuenta el 10% del wallet
 → Si pide retiro, tú le devuelves lo que queda
 ```
 
@@ -200,7 +200,7 @@ git push
 
 - **Base de datos:** PostgreSQL en Railway (se respalda automáticamente)
 - **Imágenes:** Cloudinary (plan gratuito: 25GB de almacenamiento)
-- **Comisión:** 7% por cada venta, descontada automáticamente del wallet del vendedor
+- **Comisión:** 10% por cada venta, descontada automáticamente del wallet del vendedor
 - **Wallet mínimo para vender:** $1.00
 
 ---
