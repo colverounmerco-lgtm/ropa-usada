@@ -675,3 +675,89 @@ img { max-width: 100%; display: block; }
   .form-acciones { flex-direction: column; }
   .grid-catalogo { grid-template-columns: repeat(2, 1fr); gap: var(--espacio-md); }
 }
+
+/* ── Chat flotante ── */
+.chat-flotante {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primario);
+  color: #fff;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  text-decoration: none;
+  z-index: 1000;
+  transition: transform 0.2s, background 0.2s;
+}
+.chat-flotante:hover { background: var(--color-primario-hover); transform: scale(1.08); }
+.chat-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  background: #EF4444;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Chat page ── */
+.chat-box {
+  background: var(--color-gris-claro);
+  border-radius: 12px;
+  padding: 1rem;
+  min-height: 400px;
+  max-height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.chat-vacio { text-align: center; color: var(--color-gris); padding: 2rem; }
+.chat-msg { display: flex; flex-direction: column; max-width: 75%; }
+.chat-usuario { align-self: flex-end; align-items: flex-end; }
+.chat-admin   { align-self: flex-start; align-items: flex-start; }
+.chat-burbuja {
+  padding: 0.6rem 1rem;
+  border-radius: 18px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.chat-usuario .chat-burbuja { background: var(--color-primario); color: #fff; border-bottom-right-radius: 4px; }
+.chat-admin   .chat-burbuja { background: #fff; color: var(--color-oscuro); border: 1px solid var(--color-borde); border-bottom-left-radius: 4px; }
+.chat-hora { font-size: 0.72rem; color: var(--color-gris); margin-top: 0.2rem; }
+.chat-form {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.chat-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 24px;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: var(--fuente);
+}
+.chat-input:focus { border-color: var(--color-primario); }
+
+/* ── Aviso entrega ── */
+.aviso-entrega {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  color: #1E40AF;
+  margin: 1rem 0;
+  line-height: 1.5;
+}

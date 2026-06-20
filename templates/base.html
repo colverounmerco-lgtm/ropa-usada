@@ -51,5 +51,14 @@
   </footer>
 
   <script src="/static/js/main.js"></script>
+
+  {% if usuario_actual %}
+  <a href="/chat" class="chat-flotante" title="Chat con soporte">
+    💬
+    {% if mensajes_no_leidos > 0 %}
+    <span class="chat-badge">{{ mensajes_no_leidos }}</span>
+    {% endif %}
+  </a>
+  {% endif %}
 </body>
 </html>

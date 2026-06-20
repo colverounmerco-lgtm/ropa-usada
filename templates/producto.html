@@ -24,6 +24,11 @@
           <p class="vendedor-nombre">{{ prenda.vendedor.tienda_nombre or prenda.vendedor.nombre }}</p>
         </div>
 
+        <div class="aviso-entrega">
+          🚚 <strong>Entrega coordinada con el vendedor</strong><br>
+          <span>Una vez contactes al vendedor, coordinarán juntos el método y lugar de entrega.</span>
+        </div>
+
         {% if not prenda.vendido %}
           <a href="https://wa.me/{{ prenda.vendedor.whatsapp }}?text=Hola!%20Vi%20tu%20prenda%20*{{ prenda.nombre }}*%20(Talla%20{{ prenda.talla }})%20por%20${{ "%.2f"|format(prenda.precio_comprador) }}%20en%20{{ nombre_tienda }}.%20¿Está%20disponible?"
              class="btn-whatsapp" target="_blank" rel="noopener">

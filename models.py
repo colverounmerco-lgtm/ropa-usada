@@ -4,6 +4,16 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
+class Mensaje(db.Model):
+    __tablename__ = "mensajes"
+
+    id         = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
+    de_admin   = db.Column(db.Boolean, default=False)
+    contenido  = db.Column(db.Text, nullable=False)
+    leido      = db.Column(db.Boolean, default=False)
+    fecha      = db.Column(db.DateTime, default=datetime.utcnow)
+
 class Usuario(db.Model):
     __tablename__ = "usuarios"
 

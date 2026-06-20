@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Mensajes — Admin{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:2rem">
+  <div class="page-header">
+    <h1 class="page-titulo">💬 Mensajes</h1>
+    <a href="/admin" class="btn-outline">← Dashboard</a>
+  </div>
+
+  {% if not conversaciones %}
+  <div class="vacio"><p>No hay conversaciones aún.</p></div>
+  {% else %}
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead>
+        <tr><th>Usuario</th><th>Rol</th><th>Último mensaje</th><th>Fecha</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for c in conversaciones %}
+        <tr>
+          <td>
+            <strong>{{ c.usuario.nombre }}</strong><br>
+            <small>{{ c.usuario.email }}</small>
+          </td>
+          <td><span class="badge-mini">{{ c.usuario.rol }}</span></td>
+          <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+            {{ c.ultimo.contenido[:60] }}{% if c.ultimo.contenido|length > 60 %}...{% endif %}
+          </td>
+          <td>{{ c.ultimo.fecha.strftime('%d/%m %H:%M') }}</td>
+          <td>
+            <a href="/admin/mensajes/{{ c.usuario.id }}" class="btn-accion btn-editar">
+              Ver {% if c.no_leidos > 0 %}<span class="badge-num">{{ c.no_leidos }}</span>{% endif %}
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

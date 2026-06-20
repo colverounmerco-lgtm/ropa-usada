@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Chat con {{ usuario.nombre }} — Admin{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:2rem;max-width:700px">
+  <div class="page-header">
+    <div>
+      <h1 class="page-titulo">💬 {{ usuario.nombre }}</h1>
+      <p class="page-sub">{{ usuario.email }} · {{ usuario.rol }}</p>
+    </div>
+    <a href="/admin/mensajes" class="btn-outline">← Volver</a>
+  </div>
+
+  <div class="chat-box" id="chat-box">
+    {% if not mensajes %}
+    <div class="chat-vacio"><p>No hay mensajes aún.</p></div>
+    {% endif %}
+    {% for msg in mensajes %}
+    <div class="chat-msg {% if msg.de_admin %}chat-admin{% else %}chat-usuario{% endif %}">
+      <div class="chat-burbuja">{{ msg.contenido }}</div>
+      <div class="chat-hora">
+        {% if msg.de_admin %}Tú (Admin){% else %}{{ usuario.nombre }}{% endif %} · {{ msg.fecha.strftime('%d/%m %H:%M') }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <form method="POST" class="chat-form">
+    <input type="text" name="contenido" placeholder="Escribe tu respuesta..." required autocomplete="off" class="chat-input">
+    <button type="submit" class="btn-primario">Enviar</button>
+  </form>
+</div>
+
+<script>
+  const box = document.getElementById('chat-box');
+  if (box) box.scrollTop = box.scrollHeight;
+  setTimeout(() => location.reload(), 15000);
+</script>
+{% endblock %}

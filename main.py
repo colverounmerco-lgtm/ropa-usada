@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from functools import wraps
 from config import config
-from models import db, Usuario, Prenda, RecargaWallet, RetiroWallet, MovimientoWallet, COMISION_PORCENTAJE
+from models import db, Usuario, Prenda, RecargaWallet, RetiroWallet, MovimientoWallet, Mensaje, COMISION_PORCENTAJE
 from datetime import datetime
 import os
 import cloudinary
@@ -77,11 +77,19 @@ def admin_requerido(f):
 @app.context_processor
 def vars_globales():
     usuario = None
+    mensajes_no_leidos = 0
     if session.get('usuario_id'):
         usuario = Usuario.query.get(session['usuario_id'])
+        if usuario and not usuario.es_admin:
+            mensajes_no_leidos = Mensaje.query.filter_by(
+                usuario_id=usuario.id, de_admin=True, leido=False).count()
+        elif usuario and usuario.es_admin:
+            mensajes_no_leidos = Mensaje.query.filter_by(
+                de_admin=False, leido=False).count()
     return {'nombre_tienda': config.NOMBRE_TIENDA, 'usuario_actual': usuario,
             'banco_nombre': config.BANCO_NOMBRE, 'banco_cuenta': config.BANCO_CUENTA,
-            'banco_titular': config.BANCO_TITULAR}
+            'banco_titular': config.BANCO_TITULAR,
+            'mensajes_no_leidos': mensajes_no_leidos}
 
 # ─── RUTAS PÚBLICAS ───────────────────────────
 
@@ -531,6 +539,59 @@ def admin_eliminar_prenda(id):
     db.session.commit()
     flash('🗑️ Prenda eliminada', 'success')
     return redirect(url_for('admin_prendas'))
+
+# ─── CHAT ─────────────────────────────────────
+
+@app.route('/chat')
+@login_requerido
+def chat():
+    usuario = Usuario.query.get(session['usuario_id'])
+    if usuario.es_admin:
+        return redirect(url_for('admin_mensajes'))
+    Mensaje.query.filter_by(usuario_id=usuario.id, de_admin=True, leido=False).update({'leido': True})
+    db.session.commit()
+    mensajes = Mensaje.query.filter_by(usuario_id=usuario.id).order_by(Mensaje.fecha.asc()).all()
+    return render_template('chat.html', mensajes=mensajes, usuario=usuario)
+
+@app.route('/chat/enviar', methods=['POST'])
+@login_requerido
+def chat_enviar():
+    usuario = Usuario.query.get(session['usuario_id'])
+    contenido = request.form.get('contenido', '').strip()
+    if contenido:
+        msg = Mensaje(usuario_id=usuario.id, de_admin=False, contenido=contenido)
+        db.session.add(msg)
+        db.session.commit()
+    return redirect(url_for('chat'))
+
+@app.route('/admin/mensajes')
+@admin_requerido
+def admin_mensajes():
+    subq = db.session.query(Mensaje.usuario_id).distinct().subquery()
+    usuarios = Usuario.query.filter(Usuario.id.in_(subq)).all()
+    conversaciones = []
+    for u in usuarios:
+        no_leidos = Mensaje.query.filter_by(usuario_id=u.id, de_admin=False, leido=False).count()
+        ultimo = Mensaje.query.filter_by(usuario_id=u.id).order_by(Mensaje.fecha.desc()).first()
+        conversaciones.append({'usuario': u, 'no_leidos': no_leidos, 'ultimo': ultimo})
+    conversaciones.sort(key=lambda x: x['ultimo'].fecha, reverse=True)
+    return render_template('admin/mensajes.html', conversaciones=conversaciones)
+
+@app.route('/admin/mensajes/<int:usuario_id>', methods=['GET', 'POST'])
+@admin_requerido
+def admin_chat_usuario(usuario_id):
+    usuario = Usuario.query.get_or_404(usuario_id)
+    if request.method == 'POST':
+        contenido = request.form.get('contenido', '').strip()
+        if contenido:
+            msg = Mensaje(usuario_id=usuario_id, de_admin=True, contenido=contenido)
+            db.session.add(msg)
+            db.session.commit()
+        return redirect(url_for('admin_chat_usuario', usuario_id=usuario_id))
+    Mensaje.query.filter_by(usuario_id=usuario_id, de_admin=False, leido=False).update({'leido': True})
+    db.session.commit()
+    mensajes = Mensaje.query.filter_by(usuario_id=usuario_id).order_by(Mensaje.fecha.asc()).all()
+    return render_template('admin/chat_usuario.html', mensajes=mensajes, usuario=usuario)
 
 if __name__ == '__main__':
     app.run(debug=config.DEBUG, port=5000)
