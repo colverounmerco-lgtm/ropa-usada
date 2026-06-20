@@ -20,7 +20,23 @@
 
   <header class="header">
     <div class="contenedor header-inner">
-      <a href="/" class="logo">{{ nombre_tienda }}</a>
+      <a href="/" class="logo">
+        <!-- Bandera Ecuador -->
+        <span style="display:inline-flex;border-radius:3px;overflow:hidden;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.35)">
+          <svg width="30" height="20" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="10" fill="#FFD100"/>
+            <rect y="10" width="30" height="5" fill="#003DA5"/>
+            <rect y="15" width="30" height="5" fill="#CE1126"/>
+          </svg>
+        </span>
+        <!-- Ícono bolsa de compras -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        {{ nombre_tienda }}
+      </a>
       <nav class="nav">
         <a href="/" class="nav-link">Catálogo</a>
         {% if usuario_actual %}
@@ -54,7 +70,16 @@
 
   <footer class="footer">
     <div class="contenedor">
-      <p>© 2025 {{ nombre_tienda }}</p>
+      <p style="display:flex;align-items:center;justify-content:center;gap:8px">
+        <span style="display:inline-flex;border-radius:2px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.4)">
+          <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg">
+            <rect width="24" height="8" fill="#FFD100"/>
+            <rect y="8" width="24" height="4" fill="#003DA5"/>
+            <rect y="12" width="24" height="4" fill="#CE1126"/>
+          </svg>
+        </span>
+        © 2026 {{ nombre_tienda }} — Ecuador
+      </p>
     </div>
   </footer>
 

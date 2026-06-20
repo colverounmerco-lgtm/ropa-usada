@@ -73,11 +73,15 @@ img { max-width: 100%; display: block; }
 }
 
 .logo {
-  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
   font-weight: 700;
   color: #FFFFFF;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .nav { display: flex; align-items: center; gap: var(--espacio-lg); }
