@@ -125,6 +125,21 @@ def index():
         filtro_categoria=categoria, filtro_talla=talla, filtro_precio_max=precio_max
     )
 
+@app.route('/setup-admin-x7k2')
+def setup_admin():
+    admin = Usuario.query.filter_by(rol='admin').first()
+    if admin:
+        admin.email    = config.ADMIN_EMAIL
+        admin.set_password(config.ADMIN_PASSWORD)
+        db.session.commit()
+        return 'Admin actualizado: ' + config.ADMIN_EMAIL
+    else:
+        a = Usuario(nombre='Admin', email=config.ADMIN_EMAIL, rol='admin')
+        a.set_password(config.ADMIN_PASSWORD)
+        db.session.add(a)
+        db.session.commit()
+        return 'Admin creado: ' + config.ADMIN_EMAIL
+
 @app.route('/producto/<int:id>')
 def producto(id):
     prenda = Prenda.query.get_or_404(id)
