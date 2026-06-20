@@ -21,14 +21,27 @@
   <header class="header">
     <div class="contenedor header-inner">
       <a href="/" class="logo">
-        <!-- Bandera Ecuador -->
-        <span style="display:inline-flex;border-radius:3px;overflow:hidden;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.35)">
-          <svg width="30" height="20" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-            <rect width="30" height="10" fill="#FFD100"/>
-            <rect y="10" width="30" height="5" fill="#003DA5"/>
-            <rect y="15" width="30" height="5" fill="#CE1126"/>
-          </svg>
-        </span>
+        <!-- Bandera Ecuador: amarillo 50%, azul 25%, rojo 25% + escudo oval -->
+        <svg width="34" height="23" viewBox="0 0 34 23" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,0.4)">
+          <clipPath id="ec">
+            <rect width="34" height="23" rx="3"/>
+          </clipPath>
+          <g clip-path="url(#ec)">
+            <!-- Amarillo 50% -->
+            <rect width="34" height="11.5" fill="#FFD100"/>
+            <!-- Azul 25% -->
+            <rect y="11.5" width="34" height="5.75" fill="#003DA5"/>
+            <!-- Rojo 25% -->
+            <rect y="17.25" width="34" height="5.75" fill="#CE1126"/>
+          </g>
+          <!-- Escudo oval blanco (distingue de Colombia) -->
+          <ellipse cx="17" cy="11.5" rx="5" ry="6.5" fill="white" opacity="0.9"/>
+          <!-- Montaña dentro del escudo -->
+          <polygon points="17,7 13,15 21,15" fill="#6B93C4" opacity="0.8"/>
+          <polygon points="17,9 15,14 19,14" fill="white"/>
+          <!-- Sol pequeño -->
+          <circle cx="17" cy="8" r="1.5" fill="#FFD100"/>
+        </svg>
         <!-- Ícono bolsa de compras -->
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
           <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
@@ -71,13 +84,19 @@
   <footer class="footer">
     <div class="contenedor">
       <p style="display:flex;align-items:center;justify-content:center;gap:8px">
-        <span style="display:inline-flex;border-radius:2px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.4)">
-          <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg">
-            <rect width="24" height="8" fill="#FFD100"/>
-            <rect y="8" width="24" height="4" fill="#003DA5"/>
-            <rect y="12" width="24" height="4" fill="#CE1126"/>
-          </svg>
-        </span>
+        <svg width="26" height="17" viewBox="0 0 26 17" xmlns="http://www.w3.org/2000/svg" style="border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,0.4)">
+          <clipPath id="ecf">
+            <rect width="26" height="17" rx="2"/>
+          </clipPath>
+          <g clip-path="url(#ecf)">
+            <rect width="26" height="8.5" fill="#FFD100"/>
+            <rect y="8.5" width="26" height="4.25" fill="#003DA5"/>
+            <rect y="12.75" width="26" height="4.25" fill="#CE1126"/>
+          </g>
+          <ellipse cx="13" cy="8.5" rx="3.5" ry="4.5" fill="white" opacity="0.85"/>
+          <polygon points="13,5.5 10.5,11 15.5,11" fill="#6B93C4" opacity="0.8"/>
+          <polygon points="13,7 11.5,10.5 14.5,10.5" fill="white"/>
+        </svg>
         © 2026 {{ nombre_tienda }} — Ecuador
       </p>
     </div>

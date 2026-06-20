@@ -2,20 +2,31 @@
   <!-- Fondo navy -->
   <rect width="192" height="192" rx="32" fill="#1E3A5F"/>
 
-  <!-- Bandera Ecuador sobre el ícono -->
-  <!-- Franja amarilla (50%) -->
-  <rect x="24" y="20" width="144" height="38" rx="8" fill="#FFD100"/>
-  <!-- Franja azul (25%) -->
-  <rect x="24" y="58" width="144" height="19" fill="#003DA5"/>
-  <!-- Franja roja (25%) -->
-  <rect x="24" y="77" width="144" height="19" rx="0" fill="#CE1126"/>
-  <rect x="24" y="88" width="144" height="8" rx="8" fill="#CE1126"/>
+  <!-- Bandera Ecuador con proporciones correctas: amarillo 50%, azul 25%, rojo 25% -->
+  <!-- clipPath para bordes redondeados limpios -->
+  <clipPath id="flag">
+    <rect x="20" y="18" width="152" height="76" rx="8"/>
+  </clipPath>
+  <g clip-path="url(#flag)">
+    <!-- Amarillo: 50% = 38px -->
+    <rect x="20" y="18" width="152" height="38" fill="#FFD100"/>
+    <!-- Azul: 25% = 19px -->
+    <rect x="20" y="56" width="152" height="19" fill="#003DA5"/>
+    <!-- Rojo: 25% = 19px -->
+    <rect x="20" y="75" width="152" height="19" fill="#CE1126"/>
+  </g>
+
+  <!-- Escudo simplificado (oval blanco centrado en la franja azul/centro de bandera) -->
+  <ellipse cx="96" cy="57" rx="13" ry="16" fill="white" opacity="0.92"/>
+  <!-- Montaña (Chimborazo) dentro del escudo -->
+  <polygon points="96,45 88,62 104,62" fill="#003DA5" opacity="0.7"/>
+  <polygon points="96,50 92,62 100,62" fill="white" opacity="0.9"/>
 
   <!-- Bolsa de compras blanca -->
   <!-- asa -->
-  <path d="M74 108 Q74 84 96 84 Q118 84 118 108" fill="none" stroke="white" stroke-width="11" stroke-linecap="round"/>
+  <path d="M74 116 Q74 96 96 96 Q118 96 118 116" fill="none" stroke="white" stroke-width="10" stroke-linecap="round"/>
   <!-- cuerpo -->
-  <rect x="46" y="108" width="100" height="66" rx="10" fill="white"/>
+  <rect x="48" y="116" width="96" height="60" rx="10" fill="white"/>
   <!-- línea decorativa -->
-  <rect x="46" y="122" width="100" height="4" rx="2" fill="#CBD5E1"/>
+  <rect x="48" y="130" width="96" height="4" rx="2" fill="#CBD5E1"/>
 </svg>

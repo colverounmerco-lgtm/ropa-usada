@@ -2,20 +2,34 @@
   <!-- Fondo navy -->
   <rect width="512" height="512" rx="80" fill="#1E3A5F"/>
 
-  <!-- Bandera Ecuador -->
-  <!-- Franja amarilla (50%) -->
-  <rect x="60" y="52" width="392" height="102" rx="18" fill="#FFD100"/>
-  <!-- Franja azul (25%) -->
-  <rect x="60" y="154" width="392" height="51" fill="#003DA5"/>
-  <!-- Franja roja (25%) -->
-  <rect x="60" y="205" width="392" height="51" rx="0" fill="#CE1126"/>
-  <rect x="60" y="236" width="392" height="20" rx="18" fill="#CE1126"/>
+  <!-- Bandera Ecuador: amarillo 50%, azul 25%, rojo 25% -->
+  <clipPath id="flag512">
+    <rect x="56" y="48" width="400" height="200" rx="18"/>
+  </clipPath>
+  <g clip-path="url(#flag512)">
+    <!-- Amarillo: 50% = 100px -->
+    <rect x="56" y="48" width="400" height="100" fill="#FFD100"/>
+    <!-- Azul: 25% = 50px -->
+    <rect x="56" y="148" width="400" height="50" fill="#003DA5"/>
+    <!-- Rojo: 25% = 50px -->
+    <rect x="56" y="198" width="400" height="50" fill="#CE1126"/>
+  </g>
+
+  <!-- Escudo simplificado centrado en la bandera -->
+  <ellipse cx="256" cy="148" rx="34" ry="42" fill="white" opacity="0.95"/>
+  <!-- Cielo (azul superior del escudo) -->
+  <ellipse cx="256" cy="138" rx="28" ry="20" fill="#87CEEB"/>
+  <!-- Montaña Chimborazo -->
+  <polygon points="256,120 234,156 278,156" fill="#6B7280"/>
+  <polygon points="256,127 248,144 264,144" fill="white"/>
+  <!-- Sol -->
+  <circle cx="256" cy="126" r="6" fill="#FFD100"/>
 
   <!-- Bolsa de compras blanca -->
   <!-- asa -->
-  <path d="M196 290 Q196 222 256 222 Q316 222 316 290" fill="none" stroke="white" stroke-width="28" stroke-linecap="round"/>
+  <path d="M196 310 Q196 260 256 260 Q316 260 316 310" fill="none" stroke="white" stroke-width="26" stroke-linecap="round"/>
   <!-- cuerpo -->
-  <rect x="124" y="290" width="264" height="176" rx="26" fill="white"/>
+  <rect x="130" y="310" width="252" height="166" rx="24" fill="white"/>
   <!-- línea decorativa -->
-  <rect x="124" y="326" width="264" height="10" rx="4" fill="#CBD5E1"/>
+  <rect x="130" y="348" width="252" height="10" rx="4" fill="#CBD5E1"/>
 </svg>
