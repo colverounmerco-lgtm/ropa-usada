@@ -22,7 +22,7 @@
           <td><strong>{{ r.vendedor.nombre }}</strong><br><small>{{ r.vendedor.email }}</small><br><small>Saldo actual: ${{ "%.2f"|format(r.vendedor.wallet_saldo) }}</small></td>
           <td><strong>${{ "%.2f"|format(r.monto) }}</strong></td>
           <td>
-            <a href="/static/uploads/{{ r.comprobante }}" target="_blank" class="btn-accion btn-editar">Ver comprobante</a>
+            <a href="{{ r.comprobante if r.comprobante.startswith('http') else '/static/uploads/' + r.comprobante }}" target="_blank" class="btn-accion btn-editar">Ver comprobante</a>
           </td>
           <td>{{ r.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</td>
           <td>
