@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editar prenda — Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Editar prenda â€” Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
   <header class="header">
     <div class="contenedor header-inner">
-      <a href="/admin" class="logo">← Volver al dashboard</a>
+      <a href="/admin" class="logo">â† Volver al dashboard</a>
     </div>
   </header>
 
@@ -25,7 +25,7 @@
       </div>
 
       <div class="campo">
-        <label>Descripción *</label>
+        <label>DescripciÃ³n *</label>
         <textarea name="descripcion" rows="4" required>{{ prenda.descripcion }}</textarea>
       </div>
 
@@ -37,7 +37,7 @@
         <div class="campo">
           <label>Talla *</label>
           <select name="talla" required>
-            {% for t in ['XS','S','M','L','XL','XXL','Única','34','36','38','40','42','44'] %}
+            {% for t in ['XS','S','M','L','XL','XXL','Ãšnica','34','36','38','40','42','44'] %}
               <option {% if prenda.talla == t %}selected{% endif %}>{{ t }}</option>
             {% endfor %}
           </select>
@@ -46,7 +46,7 @@
 
       <div class="campos-fila">
         <div class="campo">
-          <label>Categoría *</label>
+          <label>CategorÃ­a *</label>
           <select name="categoria" required>
             {% for cat in ['Blusas','Camisas','Pantalones','Vestidos','Faldas','Abrigos','Chaquetas','Zapatos','Bolsos','Accesorios','Ropa deportiva','Otros'] %}
               <option {% if prenda.categoria == cat %}selected{% endif %}>{{ cat }}</option>
@@ -73,7 +73,7 @@
       <div class="campo campo-check">
         <label class="check-label">
           <input type="checkbox" name="destacado" {% if prenda.destacado %}checked{% endif %}>
-          ⭐ Marcar como prenda destacada
+          â­ Marcar como prenda destacada
         </label>
       </div>
 
