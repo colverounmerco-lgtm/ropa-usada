@@ -210,6 +210,7 @@ def register():
         email    = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
 
+        rol = 'vendedor'
         if not all([rol, nombre, email, password]):
             flash('Completa todos los campos', 'error')
             return render_template('auth/register.html')

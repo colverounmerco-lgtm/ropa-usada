@@ -968,6 +968,38 @@ img { max-width: 100%; display: block; }
 .landing-preview-blur .card-preview { pointer-events: none; }
 .landing-preview-blur .card-preview:nth-child(n+5) { opacity: 0.35; filter: blur(2px); }
 
+/* Banner de vendedor (visitantes) */
+.banner-vendedor {
+  background: linear-gradient(90deg, #1E3A5F, #2563EB);
+  padding: 0.75rem 1rem;
+  color: white;
+}
+.banner-vendedor-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.banner-vendedor strong { margin-right: 0.5rem; }
+.banner-vendedor span { font-size: 0.88rem; opacity: 0.85; }
+.btn-banner-vendedor {
+  background: #FFD100;
+  color: #0F172A;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: var(--radio-md);
+  white-space: nowrap;
+  transition: var(--transicion);
+  flex-shrink: 0;
+}
+.btn-banner-vendedor:hover { background: #FFC200; transform: translateY(-1px); }
+@media (max-width: 480px) {
+  .banner-vendedor span { display: none; }
+  .banner-vendedor-inner { justify-content: center; gap: 0.75rem; }
+}
+
 @media (max-width: 900px) {
   .beneficios-grid { grid-template-columns: repeat(2, 1fr); }
   .beneficios-grid-3 { grid-template-columns: repeat(2, 1fr); }
