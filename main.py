@@ -151,6 +151,7 @@ def pwa_assetlinks():
 # ─── RUTAS PÚBLICAS ───────────────────────────
 
 @app.route('/')
+@login_requerido
 def index():
     categoria  = request.args.get('categoria', '')
     talla      = request.args.get('talla', '')
