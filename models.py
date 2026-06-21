@@ -24,6 +24,7 @@ class Usuario(db.Model):
     rol           = db.Column(db.String(20), nullable=False)
     whatsapp      = db.Column(db.String(30), nullable=True)
     tienda_nombre = db.Column(db.String(100), nullable=True)
+    ciudad        = db.Column(db.String(60), nullable=True)
     wallet_saldo  = db.Column(db.Float, default=0.0)
     activo        = db.Column(db.Boolean, default=True)
     creado_en     = db.Column(db.DateTime, default=datetime.utcnow)

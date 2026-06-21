@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100" height="120">
+
+  <!-- ── Ramas de laurel (izquierda, verde) ── -->
+  <g fill="#2D6A1F" stroke="#2D6A1F" stroke-width="0.4">
+    <ellipse cx="13" cy="88" rx="5" ry="2.5" transform="rotate(-40 13 88)"/>
+    <ellipse cx="10" cy="78" rx="5" ry="2.5" transform="rotate(-55 10 78)"/>
+    <ellipse cx="9"  cy="67" rx="5" ry="2.5" transform="rotate(-65 9 67)"/>
+    <ellipse cx="11" cy="57" rx="4.5" ry="2.2" transform="rotate(-75 11 57)"/>
+    <ellipse cx="15" cy="48" rx="4"   ry="2"   transform="rotate(-80 15 48)"/>
+    <path d="M17,95 Q12,85 9,65 Q10,55 15,45" fill="none" stroke="#2D6A1F" stroke-width="1.2"/>
+  </g>
+
+  <!-- ── Ramas de palma (derecha, verde) ── -->
+  <g fill="#1E5C16" stroke="#1E5C16" stroke-width="0.4">
+    <ellipse cx="87" cy="88" rx="5" ry="2.5" transform="rotate(40 87 88)"/>
+    <ellipse cx="90" cy="78" rx="5" ry="2.5" transform="rotate(55 90 78)"/>
+    <ellipse cx="91" cy="67" rx="5" ry="2.5" transform="rotate(65 91 67)"/>
+    <ellipse cx="89" cy="57" rx="4.5" ry="2.2" transform="rotate(75 89 57)"/>
+    <ellipse cx="85" cy="48" rx="4"   ry="2"   transform="rotate(80 85 48)"/>
+    <path d="M83,95 Q88,85 91,65 Q90,55 85,45" fill="none" stroke="#1E5C16" stroke-width="1.2"/>
+  </g>
+
+  <!-- ── Marco exterior del escudo (óvalo dorado) ── -->
+  <ellipse cx="50" cy="62" rx="30" ry="37" fill="#C8A84B" stroke="#8B6914" stroke-width="1"/>
+
+  <!-- ── Fondo cielo (azul claro, mitad superior) ── -->
+  <clipPath id="cielo">
+    <rect x="20" y="25" width="60" height="30"/>
+  </clipPath>
+  <ellipse cx="50" cy="62" rx="27" ry="34" clip-path="url(#cielo)" fill="#5BABD9"/>
+
+  <!-- ── Fondo mar (azul oscuro, mitad inferior) ── -->
+  <clipPath id="mar">
+    <rect x="20" y="55" width="60" height="44"/>
+  </clipPath>
+  <ellipse cx="50" cy="62" rx="27" ry="34" clip-path="url(#mar)" fill="#1B4F8A"/>
+
+  <!-- ── Sol en el horizonte ── -->
+  <clipPath id="sol-clip">
+    <rect x="23" y="48" width="54" height="12"/>
+  </clipPath>
+  <g clip-path="url(#sol-clip)">
+    <circle cx="50" cy="55" r="9" fill="#FFD700"/>
+    <!-- rayos -->
+    <line x1="50" y1="44" x2="50" y2="41" stroke="#FFD700" stroke-width="1.2"/>
+    <line x1="57" y1="47" x2="59" y2="44" stroke="#FFD700" stroke-width="1.2"/>
+    <line x1="43" y1="47" x2="41" y2="44" stroke="#FFD700" stroke-width="1.2"/>
+  </g>
+
+  <!-- ── Chimborazo (montaña) ── -->
+  <clipPath id="montaña-clip">
+    <ellipse cx="50" cy="62" rx="27" ry="34"/>
+  </clipPath>
+  <g clip-path="url(#montaña-clip)">
+    <!-- cuerpo montaña -->
+    <polygon points="50,36 30,68 70,68" fill="#7A8C9E"/>
+    <!-- nieve eterna (cima) -->
+    <polygon points="50,36 44,50 56,50" fill="white"/>
+    <polygon points="50,36 47,44 53,44" fill="#EEF2F7"/>
+  </g>
+
+  <!-- ── Barco a vapor Guayas ── -->
+  <clipPath id="barco-clip">
+    <ellipse cx="50" cy="62" rx="27" ry="34"/>
+  </clipPath>
+  <g clip-path="url(#barco-clip)">
+    <!-- casco -->
+    <rect x="36" y="69" width="28" height="7" rx="2" fill="#2C1810"/>
+    <!-- chimenea izquierda -->
+    <rect x="40" y="63" width="3" height="8" fill="#3D2410"/>
+    <!-- chimenea derecha -->
+    <rect x="47" y="63" width="3" height="8" fill="#3D2410"/>
+    <!-- humo izquierdo -->
+    <circle cx="41.5" cy="62" r="1.5" fill="#8B8B8B" opacity="0.7"/>
+    <circle cx="48.5" cy="62" r="1.5" fill="#8B8B8B" opacity="0.7"/>
+    <!-- ventanas/portillas -->
+    <circle cx="41" cy="72" r="1.2" fill="#5BABD9"/>
+    <circle cx="50" cy="72" r="1.2" fill="#5BABD9"/>
+    <circle cx="59" cy="72" r="1.2" fill="#5BABD9"/>
+    <!-- ola -->
+    <path d="M30,78 Q40,75 50,77 Q60,79 70,76" fill="none" stroke="#5BABD9" stroke-width="1.2"/>
+  </g>
+
+  <!-- ── Borde interior del óvalo ── -->
+  <ellipse cx="50" cy="62" rx="27" ry="34" fill="none" stroke="#C8A84B" stroke-width="2"/>
+
+  <!-- ── Signos del zodiaco (cuatro arcos dorados en el borde superior) ── -->
+  <g fill="none" stroke="#C8A84B" stroke-width="0.8">
+    <path d="M32,38 Q36,30 44,27"/> <!-- Aries -->
+    <path d="M56,27 Q64,30 68,38"/> <!-- Géminis -->
+  </g>
+  <text x="38" y="32" font-size="5" fill="#C8A84B" font-family="serif" text-anchor="middle">♈</text>
+  <text x="50" y="28" font-size="5" fill="#C8A84B" font-family="serif" text-anchor="middle">♉</text>
+  <text x="62" y="32" font-size="5" fill="#C8A84B" font-family="serif" text-anchor="middle">♊</text>
+
+  <!-- ── Cóndor (sobre la cima del escudo) ── -->
+  <!-- cuerpo -->
+  <ellipse cx="50" cy="22" rx="5" ry="3.5" fill="#2A2A2A"/>
+  <!-- cabeza -->
+  <circle cx="50" cy="17.5" r="3" fill="#D4A017"/>
+  <!-- pico -->
+  <path d="M50,16 Q53,17 51,20" fill="#2A2A2A"/>
+  <!-- ala izquierda extendida -->
+  <path d="M45,22 Q35,16 22,20 Q30,25 45,25Z" fill="#2A2A2A"/>
+  <!-- ala derecha extendida -->
+  <path d="M55,22 Q65,16 78,20 Q70,25 55,25Z" fill="#2A2A2A"/>
+  <!-- pecho blanco del cóndor -->
+  <ellipse cx="50" cy="23" rx="3" ry="2.5" fill="white"/>
+
+  <!-- ── Cinta/lazo inferior con colores de la bandera ── -->
+  <rect x="25" y="97" width="50" height="5"  rx="2" fill="#FFD100"/>
+  <rect x="25" y="102" width="50" height="2.5" fill="#003DA5"/>
+  <rect x="25" y="104.5" width="50" height="2.5" rx="0" fill="#CE1126"/>
+  <rect x="25" y="104.5" width="50" height="2.5" rx="2" fill="#CE1126"/>
+
+</svg>

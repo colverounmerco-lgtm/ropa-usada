@@ -968,36 +968,163 @@ img { max-width: 100%; display: block; }
 .landing-preview-blur .card-preview { pointer-events: none; }
 .landing-preview-blur .card-preview:nth-child(n+5) { opacity: 0.35; filter: blur(2px); }
 
-/* Banner de vendedor (visitantes) */
-.banner-vendedor {
-  background: linear-gradient(90deg, #1E3A5F, #2563EB);
-  padding: 0.75rem 1rem;
-  color: white;
+/* ── Banner hero vendedor ── */
+.banner-vendedor-hero {
+  background: linear-gradient(135deg, #1E3A5F 0%, #1E40AF 60%, #7C3AED 100%);
+  padding: 2.5rem 1rem;
+  position: relative;
+  overflow: hidden;
 }
-.banner-vendedor-inner {
+.banner-vendedor-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.banner-vendedor-hero-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  position: relative;
+}
+.banner-vendedor-hero-texto { flex: 1; min-width: 220px; }
+.banner-etiqueta {
+  display: inline-block;
+  background: rgba(255,209,0,0.2);
+  color: #FFD100;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  margin-bottom: 0.6rem;
+  border: 1px solid rgba(255,209,0,0.35);
+}
+.banner-vendedor-hero-texto h2 {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 700;
+  color: white;
+  font-family: var(--fuente-titulo);
+  margin-bottom: 0.5rem;
+}
+.banner-vendedor-hero-texto > p {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.92rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+.banner-stats {
+  display: flex;
   gap: 1rem;
   flex-wrap: wrap;
 }
-.banner-vendedor strong { margin-right: 0.5rem; }
-.banner-vendedor span { font-size: 0.88rem; opacity: 0.85; }
-.btn-banner-vendedor {
+.banner-stats span {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.1);
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.btn-banner-hero {
+  display: inline-block;
   background: #FFD100;
   color: #0F172A;
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 0.45rem 1.1rem;
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.75rem;
   border-radius: var(--radio-md);
   white-space: nowrap;
   transition: var(--transicion);
+  box-shadow: 0 4px 20px rgba(255,209,0,0.35);
   flex-shrink: 0;
 }
-.btn-banner-vendedor:hover { background: #FFC200; transform: translateY(-1px); }
-@media (max-width: 480px) {
-  .banner-vendedor span { display: none; }
-  .banner-vendedor-inner { justify-content: center; gap: 0.75rem; }
+.btn-banner-hero:hover {
+  background: #FFC200;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255,209,0,0.5);
+}
+
+/* ── Buscador ── */
+.buscador-barra {
+  background: var(--color-gris-claro);
+  border-bottom: 1px solid var(--color-borde);
+  padding: 1rem;
+  position: sticky;
+  top: 60px;
+  z-index: 90;
+}
+.buscador-form {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.buscador-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+.buscador-input-wrap svg {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-gris);
+  pointer-events: none;
+}
+.buscador-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem 0.6rem 2.4rem;
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  font-family: var(--fuente);
+  font-size: 0.9rem;
+  background: white;
+  transition: var(--transicion);
+}
+.buscador-input:focus {
+  outline: none;
+  border-color: var(--color-acento);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.btn-buscar {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radio-md);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: var(--transicion);
+  white-space: nowrap;
+}
+.btn-buscar:hover { background: var(--color-primario-hover); }
+
+/* ── Ciudad badge en tarjeta ── */
+.badge-ciudad {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+}
+
+@media (max-width: 640px) {
+  .buscador-form { flex-direction: column; align-items: stretch; }
+  .buscador-input-wrap { min-width: 100%; }
+  .banner-vendedor-hero-inner { flex-direction: column; text-align: center; }
+  .banner-stats { justify-content: center; }
+  .btn-banner-hero { width: 100%; text-align: center; }
 }
 
 @media (max-width: 900px) {

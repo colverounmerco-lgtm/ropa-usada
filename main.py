@@ -27,13 +27,17 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
     # Migración: agregar columnas de cantidad si no existen
-    cols = [c['name'] for c in sa_inspect(db.engine).get_columns('prendas')]
+    cols_prendas  = [c['name'] for c in sa_inspect(db.engine).get_columns('prendas')]
+    cols_usuarios = [c['name'] for c in sa_inspect(db.engine).get_columns('usuarios')]
     with db.engine.connect() as conn:
-        if 'cantidad' not in cols:
+        if 'cantidad' not in cols_prendas:
             conn.execute(text("ALTER TABLE prendas ADD COLUMN cantidad INTEGER NOT NULL DEFAULT 1"))
             conn.commit()
-        if 'unidades_vendidas' not in cols:
+        if 'unidades_vendidas' not in cols_prendas:
             conn.execute(text("ALTER TABLE prendas ADD COLUMN unidades_vendidas INTEGER NOT NULL DEFAULT 0"))
+            conn.commit()
+        if 'ciudad' not in cols_usuarios:
+            conn.execute(text("ALTER TABLE usuarios ADD COLUMN ciudad VARCHAR(60)"))
             conn.commit()
     if not Usuario.query.filter_by(rol='admin').first():
         admin = Usuario(nombre='Admin', email=config.ADMIN_EMAIL, rol='admin')
@@ -152,15 +156,19 @@ def pwa_assetlinks():
 
 @app.route('/')
 def index():
+    busqueda   = request.args.get('q', '').strip()
     categoria  = request.args.get('categoria', '')
     talla      = request.args.get('talla', '')
     precio_max = request.args.get('precio_max', '')
+    ciudad     = request.args.get('ciudad', '')
 
     query = Prenda.query.join(Usuario).filter(
         Prenda.vendido == False,
         Usuario.activo == True,
         Usuario.wallet_saldo > 0
     )
+    if busqueda:
+        query = query.filter(Prenda.nombre.ilike(f'%{busqueda}%'))
     if categoria:
         query = query.filter(Prenda.categoria == categoria)
     if talla:
@@ -170,16 +178,22 @@ def index():
             query = query.filter(Prenda.precio_vendedor * 1.10 <= float(precio_max))
         except ValueError:
             pass
+    if ciudad:
+        query = query.filter(Usuario.ciudad == ciudad)
 
     prendas    = query.order_by(Prenda.destacado.desc(), Prenda.creado_en.desc()).all()
     categorias = [c[0] for c in db.session.query(Prenda.categoria).join(Usuario).filter(
         Prenda.vendido == False, Usuario.wallet_saldo > 0).distinct().all()]
     tallas     = [t[0] for t in db.session.query(Prenda.talla).join(Usuario).filter(
         Prenda.vendido == False, Usuario.wallet_saldo > 0).distinct().all()]
+    ciudades   = [c[0] for c in db.session.query(Usuario.ciudad).join(Prenda).filter(
+        Prenda.vendido == False, Usuario.wallet_saldo > 0,
+        Usuario.ciudad != None, Usuario.ciudad != '').distinct().all()]
 
     return render_template('index.html',
-        prendas=prendas, categorias=categorias, tallas=tallas,
-        filtro_categoria=categoria, filtro_talla=talla, filtro_precio_max=precio_max
+        prendas=prendas, categorias=categorias, tallas=tallas, ciudades=ciudades,
+        filtro_categoria=categoria, filtro_talla=talla, filtro_precio_max=precio_max,
+        filtro_ciudad=ciudad, busqueda=busqueda
     )
 
 
@@ -227,11 +241,13 @@ def register():
         if rol == 'vendedor':
             whatsapp = request.form.get('whatsapp', '').strip()
             tienda   = request.form.get('tienda_nombre', '').strip()
+            ciudad   = request.form.get('ciudad', '').strip()
             if not whatsapp:
                 flash('Los vendedores deben ingresar su número de WhatsApp', 'error')
                 return render_template('auth/register.html')
             usuario.whatsapp      = whatsapp
             usuario.tienda_nombre = tienda or nombre
+            usuario.ciudad        = ciudad
 
         db.session.add(usuario)
         db.session.commit()
