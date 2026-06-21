@@ -7,29 +7,96 @@
     <rect x="56" y="48" width="400" height="200" rx="18"/>
   </clipPath>
   <g clip-path="url(#flag512)">
-    <!-- Amarillo: 50% = 100px -->
     <rect x="56" y="48" width="400" height="100" fill="#FFD100"/>
-    <!-- Azul: 25% = 50px -->
     <rect x="56" y="148" width="400" height="50" fill="#003DA5"/>
-    <!-- Rojo: 25% = 50px -->
     <rect x="56" y="198" width="400" height="50" fill="#CE1126"/>
   </g>
 
-  <!-- Escudo simplificado centrado en la bandera -->
-  <ellipse cx="256" cy="148" rx="34" ry="42" fill="white" opacity="0.95"/>
-  <!-- Cielo (azul superior del escudo) -->
-  <ellipse cx="256" cy="138" rx="28" ry="20" fill="#87CEEB"/>
-  <!-- Montaña Chimborazo -->
-  <polygon points="256,120 234,156 278,156" fill="#6B7280"/>
-  <polygon points="256,127 248,144 264,144" fill="white"/>
-  <!-- Sol -->
-  <circle cx="256" cy="126" r="6" fill="#FFD100"/>
+  <!-- Escudo Nacional del Ecuador -->
+  <defs>
+    <clipPath id="ov512"><ellipse cx="256" cy="148" rx="34" ry="42"/></clipPath>
+  </defs>
+
+  <!-- Ramas de laurel izquierda -->
+  <path d="M217,196 Q206,170 211,128" fill="none" stroke="#2D6A1F" stroke-width="3.5"/>
+  <ellipse cx="210" cy="191" rx="10" ry="4.5" transform="rotate(-35 210 191)" fill="#2D6A1F"/>
+  <ellipse cx="208" cy="175" rx="10" ry="4.5" transform="rotate(-52 208 175)" fill="#2D6A1F"/>
+  <ellipse cx="208" cy="160" rx="9" ry="4" transform="rotate(-65 208 160)" fill="#2D6A1F"/>
+  <ellipse cx="209" cy="146" rx="9" ry="4" transform="rotate(-76 209 146)" fill="#2D6A1F"/>
+  <ellipse cx="211" cy="133" rx="8" ry="3.5" transform="rotate(-83 211 133)" fill="#2D6A1F"/>
+
+  <!-- Ramas de palma derecha -->
+  <path d="M295,196 Q306,170 301,128" fill="none" stroke="#1E5C16" stroke-width="3.5"/>
+  <ellipse cx="302" cy="191" rx="10" ry="4.5" transform="rotate(35 302 191)" fill="#1E5C16"/>
+  <ellipse cx="304" cy="175" rx="10" ry="4.5" transform="rotate(52 304 175)" fill="#1E5C16"/>
+  <ellipse cx="304" cy="160" rx="9" ry="4" transform="rotate(65 304 160)" fill="#1E5C16"/>
+  <ellipse cx="303" cy="146" rx="9" ry="4" transform="rotate(76 303 146)" fill="#1E5C16"/>
+  <ellipse cx="301" cy="133" rx="8" ry="3.5" transform="rotate(83 301 133)" fill="#1E5C16"/>
+
+  <!-- Fondo dorado del marco oval (borde) -->
+  <ellipse cx="256" cy="148" rx="36" ry="44" fill="#C8A84B"/>
+
+  <!-- Fondo blanco interior del óvalo -->
+  <ellipse cx="256" cy="148" rx="34" ry="42" fill="white"/>
+
+  <!-- Interior del escudo (clipeado al óvalo) -->
+  <g clip-path="url(#ov512)">
+    <!-- Cielo azul claro -->
+    <rect x="222" y="106" width="68" height="42" fill="#5BABD9"/>
+    <!-- Mar azul oscuro -->
+    <rect x="222" y="148" width="68" height="42" fill="#1B4F8A"/>
+    <!-- Sol en el horizonte -->
+    <circle cx="256" cy="148" r="13" fill="#FFD700"/>
+    <!-- Rayos del sol -->
+    <line x1="256" y1="132" x2="256" y2="127" stroke="#FFD700" stroke-width="2.5"/>
+    <line x1="266" y1="135" x2="270" y2="131" stroke="#FFD700" stroke-width="2.5"/>
+    <line x1="246" y1="135" x2="242" y2="131" stroke="#FFD700" stroke-width="2.5"/>
+    <line x1="270" y1="143" x2="275" y2="141" stroke="#FFD700" stroke-width="2.5"/>
+    <line x1="242" y1="143" x2="237" y2="141" stroke="#FFD700" stroke-width="2.5"/>
+    <!-- Chimborazo (nevado) -->
+    <polygon points="256,112 228,164 284,164" fill="#7A8C9E"/>
+    <polygon points="256,112 247,133 265,133" fill="white"/>
+    <polygon points="256,112 252,122 260,122" fill="#EEF2F7"/>
+    <!-- Barco a vapor Guayas -->
+    <rect x="237" y="164" width="38" height="14" rx="3" fill="#2C1810"/>
+    <rect x="243" y="154" width="5.5" height="12" fill="#3D2410"/>
+    <rect x="253" y="154" width="5.5" height="12" fill="#3D2410"/>
+    <!-- Humo chimeneas -->
+    <circle cx="245.5" cy="152" r="3" fill="#888" opacity="0.7"/>
+    <circle cx="255.5" cy="152" r="3" fill="#888" opacity="0.7"/>
+    <!-- Portillas -->
+    <circle cx="241" cy="171" r="2.5" fill="#5BABD9"/>
+    <circle cx="256" cy="171" r="2.5" fill="#5BABD9"/>
+    <circle cx="271" cy="171" r="2.5" fill="#5BABD9"/>
+    <!-- Ola del barco -->
+    <path d="M226,180 Q241,176 256,178 Q271,180 286,176" fill="none" stroke="#5BABD9" stroke-width="2.5"/>
+  </g>
+
+  <!-- Borde dorado fino del escudo -->
+  <ellipse cx="256" cy="148" rx="36" ry="44" fill="none" stroke="#8B6914" stroke-width="1.5"/>
+
+  <!-- Signos del zodiaco en el borde dorado (4 meses de la Revolución de Marzo) -->
+  <text x="232" y="118" font-size="11" fill="#8B6914" font-family="serif" text-anchor="middle">♈</text>
+  <text x="246" y="107" font-size="11" fill="#8B6914" font-family="serif" text-anchor="middle">♉</text>
+  <text x="266" y="107" font-size="11" fill="#8B6914" font-family="serif" text-anchor="middle">♊</text>
+  <text x="280" y="118" font-size="11" fill="#8B6914" font-family="serif" text-anchor="middle">♋</text>
+
+  <!-- Cóndor sobre el escudo -->
+  <!-- Alas extendidas -->
+  <path d="M208,105 Q228,93 256,99 Q284,93 304,105 Q284,117 256,111 Q228,117 208,105Z" fill="#1A1A1A"/>
+  <!-- Cuerpo del cóndor -->
+  <ellipse cx="256" cy="105" rx="13" ry="9" fill="#1A1A1A"/>
+  <!-- Cabeza dorada -->
+  <circle cx="256" cy="93" r="8.5" fill="#D4A017"/>
+  <!-- Cuello/collar blanco -->
+  <ellipse cx="256" cy="101" rx="6" ry="5" fill="white"/>
+  <!-- Pico -->
+  <path d="M256,87 Q263,91 260,98" fill="#1A1A1A" stroke="#8B6914" stroke-width="0.5"/>
+  <!-- Ojo -->
+  <circle cx="259" cy="91" r="1.5" fill="#1A1A1A"/>
 
   <!-- Bolsa de compras blanca -->
-  <!-- asa -->
   <path d="M196 310 Q196 260 256 260 Q316 260 316 310" fill="none" stroke="white" stroke-width="26" stroke-linecap="round"/>
-  <!-- cuerpo -->
   <rect x="130" y="310" width="252" height="166" rx="24" fill="white"/>
-  <!-- línea decorativa -->
   <rect x="130" y="348" width="252" height="10" rx="4" fill="#CBD5E1"/>
 </svg>
