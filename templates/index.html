@@ -1,17 +1,210 @@
 {% extends "base.html" %}
-{% block title %}Catálogo — {{ nombre_tienda }}{% endblock %}
+{% block title %}{{ nombre_tienda }} — Compra y vende en Ecuador{% endblock %}
 {% block contenido %}
 
+{% if not usuario_actual %}
+<!-- ══════════════════════════════════════════
+     LANDING PAGE — visitante no registrado
+══════════════════════════════════════════ -->
+
+<!-- HERO -->
 <section class="hero">
   <div class="contenedor">
-    <h1 class="hero-titulo">Compra, vende y<br>ofrece servicios</h1>
-    <p class="hero-sub">Artículos · Accesorios · Servicios · Electrónica · y mucho más</p>
-    {% if not usuario_actual %}
+    <h1 class="hero-titulo">Compra y vende<br>en el marketplace<br>de Ecuador</h1>
+    <p class="hero-sub">Ropa, electrónica, accesorios, servicios y mucho más.<br>Regístrate gratis y empieza hoy.</p>
     <div class="hero-botones">
       <a href="/register?rol=comprador" class="btn-primario">Quiero comprar</a>
       <a href="/register?rol=vendedor" class="btn-outline">Quiero vender</a>
     </div>
-    {% endif %}
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="landing-stats">
+  <div class="contenedor">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-numero">$1</span>
+        <span class="stat-label">para empezar a vender</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-numero">10%</span>
+        <span class="stat-label">de comisión, solo al vender</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-numero">Gratis</span>
+        <span class="stat-label">registro de cuenta</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-numero">100%</span>
+        <span class="stat-label">online desde tu celular</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BENEFICIOS VENDEDORES -->
+<section class="seccion landing-seccion">
+  <div class="contenedor">
+    <div class="landing-encabezado">
+      <p class="landing-etiqueta">Para vendedores</p>
+      <h2 class="landing-titulo">¿Por qué vender en<br>Marketplace Ecuador?</h2>
+    </div>
+    <div class="beneficios-grid">
+
+      <div class="beneficio-card">
+        <div class="beneficio-icono">📦</div>
+        <h3>Llega a más compradores</h3>
+        <p>Publica tus artículos y hazlos visibles para cientos de usuarios activos cada día en Ecuador sin salir de casa.</p>
+      </div>
+
+      <div class="beneficio-card">
+        <div class="beneficio-icono">💰</div>
+        <h3>Comisión justa, sin sorpresas</h3>
+        <p>Solo el 10% cuando vendes. Sin mensualidades ni tarifas fijas. Te quedas con el 90% de cada venta.</p>
+      </div>
+
+      <div class="beneficio-card">
+        <div class="beneficio-icono">📱</div>
+        <h3>Gestiona desde cualquier dispositivo</h3>
+        <p>Agrega productos, revisa tus ventas y controla tu stock desde tu celular, tablet o computadora en cualquier momento.</p>
+      </div>
+
+      <div class="beneficio-card">
+        <div class="beneficio-icono">🚀</div>
+        <h3>Empieza con solo $1</h3>
+        <p>Recarga $1 en tu wallet y publica todos los artículos que quieras sin límite de productos ni categorías.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BENEFICIOS COMPRADORES -->
+<section class="seccion landing-seccion landing-seccion-gris">
+  <div class="contenedor">
+    <div class="landing-encabezado">
+      <p class="landing-etiqueta">Para compradores</p>
+      <h2 class="landing-titulo">Todo lo que necesitas<br>en un solo lugar</h2>
+    </div>
+    <div class="beneficios-grid beneficios-grid-3">
+
+      <div class="beneficio-card">
+        <div class="beneficio-icono">🛍️</div>
+        <h3>Miles de artículos disponibles</h3>
+        <p>Ropa, electrónica, accesorios, servicios y mucho más. Nuevos productos se agregan todos los días.</p>
+      </div>
+
+      <div class="beneficio-card">
+        <div class="beneficio-icono">🏷️</div>
+        <h3>Precios directos de vendedor</h3>
+        <p>Sin intermediarios. Compra directamente al vendedor al mejor precio y ahorra en cada compra.</p>
+      </div>
+
+      <div class="beneficio-card">
+        <div class="beneficio-icono">🇪🇨</div>
+        <h3>Vendedores locales en Ecuador</h3>
+        <p>Compra a personas de tu ciudad. Entrega rápida y contacto directo con el vendedor en todo momento.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA REGISTRO VENDEDOR -->
+<section class="landing-cta">
+  <div class="contenedor">
+    <div class="cta-contenido">
+      <div class="cta-texto">
+        <h2>Registrar tu tienda<br><strong>lleva minutos</strong></h2>
+        <p>Solo unos datos y ya estás dentro.<br>Empieza a vender desde $1 hoy mismo.</p>
+        <ul class="cta-lista">
+          <li>✅ Registro gratuito</li>
+          <li>✅ Sin mensualidades ni tarifas fijas</li>
+          <li>✅ Publica artículos ilimitados con $1</li>
+          <li>✅ Cobra el 90% de cada venta</li>
+        </ul>
+        <a href="/register?rol=vendedor" class="btn-cta-grande">Registrar mi tienda gratis</a>
+      </div>
+      <div class="cta-pasos">
+        <h3>¿Cómo funciona?</h3>
+        <div class="paso">
+          <span class="paso-num">1</span>
+          <div>
+            <strong>Crea tu cuenta</strong>
+            <p>Regístrate como vendedor en menos de 2 minutos</p>
+          </div>
+        </div>
+        <div class="paso">
+          <span class="paso-num">2</span>
+          <div>
+            <strong>Recarga $1 en tu wallet</strong>
+            <p>El mínimo para activar tu tienda y publicar</p>
+          </div>
+        </div>
+        <div class="paso">
+          <span class="paso-num">3</span>
+          <div>
+            <strong>Publica tus artículos</strong>
+            <p>Fotos, precio, descripción y listo</p>
+          </div>
+        </div>
+        <div class="paso">
+          <span class="paso-num">4</span>
+          <div>
+            <strong>¡Empieza a vender!</strong>
+            <p>Recibe el 90% de cada venta directamente</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREVIEW DEL CATÁLOGO -->
+{% if prendas %}
+<section class="seccion landing-seccion-gris">
+  <div class="contenedor">
+    <div class="landing-encabezado">
+      <h2 class="landing-titulo" style="font-size:1.6rem">Artículos disponibles ahora</h2>
+      <p style="color:var(--color-gris);margin-top:0.5rem">Regístrate para ver el catálogo completo y comprar</p>
+    </div>
+    <div class="grid-catalogo landing-preview-blur">
+      {% for prenda in prendas[:6] %}
+      <div class="card card-preview">
+        <div class="card-imagen">
+          <img src="{{ prenda.imagen_url }}" alt="{{ prenda.nombre }}" loading="lazy">
+          {% if prenda.destacado %}<span class="badge-destacado">⭐ Destacado</span>{% endif %}
+        </div>
+        <div class="card-info">
+          <span class="card-categoria">{{ prenda.categoria }}</span>
+          <h3 class="card-nombre">{{ prenda.nombre }}</h3>
+          <p class="card-vendedor">{{ prenda.vendedor.tienda_nombre or prenda.vendedor.nombre }}</p>
+          <div class="card-footer">
+            <span class="card-precio">${{ "%.2f"|format(prenda.precio_comprador) }}</span>
+            {% if prenda.talla %}<span class="card-talla">{{ prenda.talla }}</span>{% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <a href="/register?rol=comprador" class="btn-primario">Ver catálogo completo</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+
+{% else %}
+<!-- ══════════════════════════════════════════
+     CATÁLOGO — usuario autenticado
+══════════════════════════════════════════ -->
+
+<section class="hero" style="padding:2rem 1rem">
+  <div class="contenedor">
+    <h1 class="hero-titulo" style="font-size:1.6rem">Catálogo de artículos</h1>
+    <p class="hero-sub">{{ prendas|length }} artículo{% if prendas|length != 1 %}s{% endif %} disponible{% if prendas|length != 1 %}s{% endif %}</p>
   </div>
 </section>
 
@@ -32,10 +225,10 @@
       </select>
       <select name="precio_max" class="filtro-select" onchange="this.form.submit()">
         <option value="">Cualquier precio</option>
-        <option value="10" {% if filtro_precio_max == '10' %}selected{% endif %}>Hasta $10</option>
-        <option value="20" {% if filtro_precio_max == '20' %}selected{% endif %}>Hasta $20</option>
-        <option value="30" {% if filtro_precio_max == '30' %}selected{% endif %}>Hasta $30</option>
-        <option value="50" {% if filtro_precio_max == '50' %}selected{% endif %}>Hasta $50</option>
+        <option value="10"  {% if filtro_precio_max == '10'  %}selected{% endif %}>Hasta $10</option>
+        <option value="20"  {% if filtro_precio_max == '20'  %}selected{% endif %}>Hasta $20</option>
+        <option value="30"  {% if filtro_precio_max == '30'  %}selected{% endif %}>Hasta $30</option>
+        <option value="50"  {% if filtro_precio_max == '50'  %}selected{% endif %}>Hasta $50</option>
       </select>
       {% if filtro_categoria or filtro_talla or filtro_precio_max %}
         <a href="/" class="btn-limpiar">✕ Limpiar</a>
@@ -43,7 +236,6 @@
     </form>
 
     {% if prendas %}
-      <p class="resultado-count">{{ prendas|length }} artículo{% if prendas|length != 1 %}s{% endif %} disponible{% if prendas|length != 1 %}s{% endif %}</p>
       <div class="grid-catalogo">
         {% for prenda in prendas %}
         <a href="/producto/{{ prenda.id }}" class="card">
@@ -65,11 +257,12 @@
       </div>
     {% else %}
       <div class="vacio">
-        <p>😔 No hay artículos disponibles con esos filtros</p>
+        <p>No hay artículos disponibles con esos filtros</p>
         <a href="/" class="btn-primario">Ver todo</a>
       </div>
     {% endif %}
   </div>
 </section>
 
+{% endif %}
 {% endblock %}
