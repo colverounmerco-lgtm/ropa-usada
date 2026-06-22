@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar recepción — {{ nombre_tienda }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css?v=3">
+</head>
+<body class="bg-gris">
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem">
+<div style="background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.12);max-width:480px;width:100%;overflow:hidden">
+
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#1E3A5F,#1E40AF);padding:1.75rem 2rem">
+    <p style="color:rgba(255,255,255,0.7);font-size:0.8rem;margin-bottom:0.25rem">{{ nombre_tienda }}</p>
+    <h1 style="color:white;font-size:1.4rem;font-weight:700;font-family:'Poppins',sans-serif;margin:0">
+      Confirmación de recepción
+    </h1>
+  </div>
+
+  <div style="padding:2rem">
+
+    {% if resultado == None %}
+    <!-- ══ PENDIENTE: mostrar botones ══ -->
+    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:1.25rem;margin-bottom:1.5rem">
+      <p style="font-size:0.8rem;color:#1E40AF;font-weight:600;margin-bottom:0.25rem">VENTA PENDIENTE</p>
+      <h2 style="font-size:1.2rem;font-weight:700;color:#0F172A;margin-bottom:0.25rem">{{ prenda.nombre }}</h2>
+      <p style="color:#64748B;font-size:0.9rem">Vendedor: <strong>{{ prenda.vendedor.tienda_nombre or prenda.vendedor.nombre }}</strong></p>
+      {% if prenda.comprador_nombre %}
+      <p style="color:#64748B;font-size:0.9rem">Comprador: <strong>{{ prenda.comprador_nombre }}</strong></p>
+      {% endif %}
+      <p style="color:#64748B;font-size:0.85rem;margin-top:0.5rem">
+        Precio: <strong>${{ "%.2f"|format(prenda.precio_comprador) }}</strong>
+      </p>
+    </div>
+
+    {% if horas is not none %}
+    <p style="text-align:center;font-size:0.85rem;color:#64748B;margin-bottom:1.25rem">
+      ⏱ Tiempo restante para confirmar: <strong>{{ horas }}h</strong>
+      <br><small>Si no respondes, la venta se confirmará automáticamente</small>
+    </p>
+    {% endif %}
+
+    <p style="font-size:1rem;font-weight:600;color:#0F172A;text-align:center;margin-bottom:1.25rem">
+      ¿Recibiste el artículo?
+    </p>
+
+    <form method="POST" style="display:flex;flex-direction:column;gap:0.75rem">
+      <button name="accion" value="confirmar" type="submit"
+        style="background:#059669;color:white;border:none;padding:1rem;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s"
+        onmouseover="this.style.background='#047857'" onmouseout="this.style.background='#059669'">
+        ✅ Sí, lo recibí — Confirmar venta
+      </button>
+      <button name="accion" value="disputar" type="submit"
+        style="background:white;color:#DC2626;border:2px solid #DC2626;padding:0.9rem;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s"
+        onclick="return confirm('¿Estás seguro de que quieres disputar esta venta? El administrador revisará tu caso.')"
+        onmouseover="this.style.background='#FEE2E2'" onmouseout="this.style.background='white'">
+        ❌ No lo recibí — Disputar
+      </button>
+    </form>
+
+    {% elif resultado == 'confirmado' %}
+    <!-- ══ CONFIRMADO ══ -->
+    <div style="text-align:center;padding:1rem 0">
+      <div style="font-size:4rem;margin-bottom:1rem">✅</div>
+      <h2 style="font-size:1.4rem;font-weight:700;color:#059669;margin-bottom:0.5rem">¡Venta confirmada!</h2>
+      <p style="color:#64748B">Has confirmado que recibiste <strong>{{ prenda.nombre }}</strong>.</p>
+      <p style="color:#64748B;font-size:0.9rem;margin-top:0.5rem">El vendedor ha sido notificado. ¡Gracias por usar {{ nombre_tienda }}!</p>
+    </div>
+
+    {% elif resultado == 'auto_confirmado' %}
+    <!-- ══ AUTO-CONFIRMADO ══ -->
+    <div style="text-align:center;padding:1rem 0">
+      <div style="font-size:4rem;margin-bottom:1rem">⏱</div>
+      <h2 style="font-size:1.4rem;font-weight:700;color:#D97706;margin-bottom:0.5rem">Venta auto-confirmada</h2>
+      <p style="color:#64748B">Han pasado 48 horas sin respuesta. La venta de <strong>{{ prenda.nombre }}</strong> fue confirmada automáticamente.</p>
+    </div>
+
+    {% elif resultado == 'disputado' %}
+    <!-- ══ DISPUTADO ══ -->
+    <div style="text-align:center;padding:1rem 0">
+      <div style="font-size:4rem;margin-bottom:1rem">⚠️</div>
+      <h2 style="font-size:1.4rem;font-weight:700;color:#DC2626;margin-bottom:0.5rem">Disputa registrada</h2>
+      <p style="color:#64748B">Tu disputa sobre <strong>{{ prenda.nombre }}</strong> ha sido registrada.</p>
+      <p style="color:#64748B;font-size:0.9rem;margin-top:0.5rem">El administrador revisará el caso y se pondrá en contacto contigo pronto.</p>
+    </div>
+
+    {% elif resultado == 'ya_confirmado' %}
+    <div style="text-align:center;padding:1rem 0">
+      <div style="font-size:4rem;margin-bottom:1rem">✅</div>
+      <h2 style="font-size:1.4rem;font-weight:700;color:#059669;margin-bottom:0.5rem">Ya confirmada</h2>
+      <p style="color:#64748B">Esta venta ya fue confirmada anteriormente.</p>
+    </div>
+
+    {% elif resultado == 'ya_disputado' %}
+    <div style="text-align:center;padding:1rem 0">
+      <div style="font-size:4rem;margin-bottom:1rem">⚠️</div>
+      <h2 style="font-size:1.4rem;font-weight:700;color:#DC2626;margin-bottom:0.5rem">Ya disputada</h2>
+      <p style="color:#64748B">Esta venta ya fue disputada. El admin está revisando el caso.</p>
+    </div>
+    {% endif %}
+
+    <div style="text-align:center;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #E2E8F0">
+      <a href="/" style="color:#2563EB;font-size:0.88rem">← Ver catálogo de {{ nombre_tienda }}</a>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>

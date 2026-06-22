@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from functools import wraps
 from config import config
 from models import db, Usuario, Prenda, RecargaWallet, RetiroWallet, MovimientoWallet, Mensaje, COMISION_PORCENTAJE
-from datetime import datetime
+from datetime import datetime, timedelta
+import secrets
 from sqlalchemy import text, inspect as sa_inspect
 import os
 import cloudinary
@@ -39,6 +40,16 @@ with app.app_context():
         if 'ciudad' not in cols_usuarios:
             conn.execute(text("ALTER TABLE usuarios ADD COLUMN ciudad VARCHAR(60)"))
             conn.commit()
+        for col, ddl in [
+            ('pendiente_conf',   'ALTER TABLE prendas ADD COLUMN pendiente_conf BOOLEAN DEFAULT FALSE'),
+            ('token_conf',       'ALTER TABLE prendas ADD COLUMN token_conf VARCHAR(40)'),
+            ('fecha_pendiente',  'ALTER TABLE prendas ADD COLUMN fecha_pendiente TIMESTAMP'),
+            ('comprador_nombre', 'ALTER TABLE prendas ADD COLUMN comprador_nombre VARCHAR(100)'),
+            ('disputado',        'ALTER TABLE prendas ADD COLUMN disputado BOOLEAN DEFAULT FALSE'),
+        ]:
+            if col not in cols_prendas:
+                conn.execute(text(ddl))
+                conn.commit()
     if not Usuario.query.filter_by(rol='admin').first():
         admin = Usuario(nombre='Admin', email=config.ADMIN_EMAIL, rol='admin')
         admin.set_password(config.ADMIN_PASSWORD)
@@ -367,17 +378,54 @@ def wallet_retirar():
 
     return render_template('vendedor/retirar.html', vendedor=vendedor)
 
+# ─── HELPERS CONFIRMACIÓN ─────────────────────
+
+def _confirmar_venta(prenda):
+    vendedor = prenda.vendedor
+    comision = prenda.monto_comision
+    vendedor.wallet_saldo = round(vendedor.wallet_saldo - comision, 2)
+    if vendedor.wallet_saldo < 0:
+        vendedor.wallet_saldo = 0
+    mov = MovimientoWallet(
+        vendedor_id = vendedor.id,
+        tipo        = 'comision',
+        monto       = -comision,
+        descripcion = f'Comisión 10% — "{prenda.nombre}" (unidad #{prenda.unidades_vendidas})'
+    )
+    db.session.add(mov)
+    prenda.pendiente_conf = False
+    if prenda.cantidad <= 0:
+        prenda.vendido = True
+    db.session.commit()
+
+def auto_confirmar_expirados():
+    limite = datetime.utcnow() - timedelta(hours=48)
+    expirados = Prenda.query.filter(
+        Prenda.pendiente_conf == True,
+        Prenda.fecha_pendiente <= limite
+    ).all()
+    for p in expirados:
+        _confirmar_venta(p)
+
 # ─── PANEL VENDEDOR ───────────────────────────
 
 @app.route('/mi-tienda')
 @vendedor_requerido
 def vendedor_dashboard():
-    vendedor = Usuario.query.get(session['usuario_id'])
-    prendas  = Prenda.query.filter_by(vendedor_id=vendedor.id).order_by(Prenda.creado_en.desc()).all()
+    auto_confirmar_expirados()
+    vendedor  = Usuario.query.get(session['usuario_id'])
+    prendas   = Prenda.query.filter_by(vendedor_id=vendedor.id).order_by(Prenda.creado_en.desc()).all()
+    now       = datetime.utcnow()
+    pendientes = []
+    for p in prendas:
+        if p.pendiente_conf and p.fecha_pendiente:
+            horas = max(0, 48 - (now - p.fecha_pendiente).total_seconds() / 3600)
+            pendientes.append({'prenda': p, 'horas': round(horas, 1)})
     return render_template('vendedor/dashboard.html',
         vendedor=vendedor,
         prendas=prendas,
-        disponibles=sum(1 for p in prendas if not p.vendido),
+        pendientes=pendientes,
+        disponibles=sum(1 for p in prendas if not p.vendido and not p.pendiente_conf),
         vendidas=sum(1 for p in prendas if p.vendido),
         total_vendidas=sum(p.unidades_vendidas for p in prendas)
     )
@@ -444,44 +492,72 @@ def vendedor_vender(id):
 
     if prenda.vendedor_id != vendedor.id:
         return redirect(url_for('vendedor_dashboard'))
-
     if prenda.cantidad <= 0:
-        flash('Este artículo ya no tiene stock. Edítalo para agregar más unidades.', 'error')
+        flash('Sin stock disponible.', 'error')
+        return redirect(url_for('vendedor_dashboard'))
+    if prenda.pendiente_conf:
+        flash('Ya hay una venta pendiente de confirmación para este artículo.', 'warning')
         return redirect(url_for('vendedor_dashboard'))
 
-    comision = prenda.monto_comision
-    if vendedor.wallet_saldo < comision:
-        flash(f'Saldo insuficiente para cubrir la comisión (${comision:.2f}). Recarga tu wallet.', 'error')
-        return redirect(url_for('vendedor_dashboard'))
+    comprador_nombre = request.form.get('comprador_nombre', '').strip() or 'Comprador'
+    token = secrets.token_urlsafe(20)
 
     prenda.cantidad          -= 1
     prenda.unidades_vendidas += 1
-    vendedor.wallet_saldo     = round(vendedor.wallet_saldo - comision, 2)
+    prenda.pendiente_conf     = True
+    prenda.token_conf         = token
+    prenda.fecha_pendiente    = datetime.utcnow()
+    prenda.comprador_nombre   = comprador_nombre
 
-    if prenda.cantidad <= 0:
-        prenda.cantidad = 0
-        prenda.vendido  = True
-
-    if vendedor.wallet_saldo < 0:
-        vendedor.wallet_saldo = 0
-
-    mov = MovimientoWallet(
-        vendedor_id = vendedor.id,
-        tipo        = 'comision',
-        monto       = -comision,
-        descripcion = f'Comisión 10% — "{prenda.nombre}" (unidad #{prenda.unidades_vendidas})'
-    )
-    db.session.add(mov)
     db.session.commit()
-
-    if prenda.vendido:
-        flash(f'✅ Venta registrada. Comisión: ${comision:.2f}. Stock agotado — edita el artículo para reabastecer.', 'warning')
-    elif vendedor.wallet_saldo <= 0:
-        flash(f'✅ Venta registrada. Quedan {prenda.cantidad} unidades. Wallet en $0 — recarga para seguir vendiendo.', 'warning')
-    else:
-        flash(f'✅ Venta registrada. Quedan {prenda.cantidad} unidades. Comisión: ${comision:.2f}.', 'success')
-
+    flash(f'pendiente:{token}', 'pendiente')
     return redirect(url_for('vendedor_dashboard'))
+
+@app.route('/mi-tienda/cancelar-pendiente/<int:id>', methods=['POST'])
+@vendedor_requerido
+def vendedor_cancelar_pendiente(id):
+    prenda   = Prenda.query.get_or_404(id)
+    vendedor = Usuario.query.get(session['usuario_id'])
+    if prenda.vendedor_id != vendedor.id:
+        return redirect(url_for('vendedor_dashboard'))
+    prenda.cantidad          += 1
+    prenda.unidades_vendidas  = max(0, prenda.unidades_vendidas - 1)
+    prenda.pendiente_conf     = False
+    prenda.token_conf         = None
+    prenda.fecha_pendiente    = None
+    prenda.comprador_nombre   = None
+    db.session.commit()
+    flash('Venta cancelada. El artículo vuelve al catálogo.', 'info')
+    return redirect(url_for('vendedor_dashboard'))
+
+@app.route('/confirmar/<token>', methods=['GET', 'POST'])
+def confirmar_venta(token):
+    prenda = Prenda.query.filter_by(token_conf=token).first_or_404()
+
+    if not prenda.pendiente_conf:
+        resultado = 'ya_disputado' if prenda.disputado else 'ya_confirmado'
+        return render_template('confirmar.html', prenda=prenda, resultado=resultado, horas=None)
+
+    # Auto-confirm si pasaron 48h
+    if prenda.fecha_pendiente:
+        delta = datetime.utcnow() - prenda.fecha_pendiente
+        if delta.total_seconds() > 48 * 3600:
+            _confirmar_venta(prenda)
+            return render_template('confirmar.html', prenda=prenda, resultado='auto_confirmado', horas=None)
+
+    if request.method == 'POST':
+        accion = request.form.get('accion')
+        if accion == 'confirmar':
+            _confirmar_venta(prenda)
+            return render_template('confirmar.html', prenda=prenda, resultado='confirmado', horas=None)
+        elif accion == 'disputar':
+            prenda.disputado      = True
+            prenda.pendiente_conf = False
+            db.session.commit()
+            return render_template('confirmar.html', prenda=prenda, resultado='disputado', horas=None)
+
+    horas = max(0, 48 - (datetime.utcnow() - prenda.fecha_pendiente).total_seconds() / 3600)
+    return render_template('confirmar.html', prenda=prenda, resultado=None, horas=round(horas, 1))
 
 @app.route('/mi-tienda/eliminar/<int:id>', methods=['POST'])
 @vendedor_requerido

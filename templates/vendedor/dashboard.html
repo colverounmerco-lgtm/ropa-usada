@@ -12,7 +12,23 @@
   </div>
 
   {% with mensajes = get_flashed_messages(with_categories=true) %}
-    {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
+    {% for cat, msg in mensajes %}
+      {% if cat == 'pendiente' %}
+        {% set token = msg.replace('pendiente:', '') %}
+        <div class="alerta-pendiente-nueva">
+          <div>
+            <strong>⏳ Venta registrada — esperando confirmación del comprador</strong>
+            <p>Envía este enlace al comprador por WhatsApp para que confirme la recepción:</p>
+            <div class="link-confirmacion-wrap">
+              <input type="text" class="link-confirmacion-input" id="link-conf" value="{{ request.host_url }}confirmar/{{ token }}" readonly>
+              <button onclick="copiarLink()" class="btn-copiar">Copiar</button>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="alerta alerta-{{ cat }}">{{ msg }}</div>
+      {% endif %}
+    {% endfor %}
   {% endwith %}
 
   <div class="stats-grid">
@@ -42,6 +58,41 @@
     <a href="/wallet/recargar" class="btn-outline btn-sm">+ Recargar</a>
   </div>
 
+  <!-- ══ VENTAS PENDIENTES DE CONFIRMACIÓN ══ -->
+  {% if pendientes %}
+  <div class="seccion-pendientes">
+    <h2 class="seccion-pendientes-titulo">
+      ⏳ Ventas pendientes de confirmación
+      <span class="badge-count">{{ pendientes|length }}</span>
+    </h2>
+    {% for item in pendientes %}
+    {% set p = item.prenda %}
+    <div class="card-pendiente">
+      <img src="{{ p.imagen_url }}" class="pendiente-foto" alt="{{ p.nombre }}">
+      <div class="pendiente-info">
+        <strong>{{ p.nombre }}</strong>
+        <p>Comprador: <em>{{ p.comprador_nombre or '—' }}</em></p>
+        <p class="pendiente-timer">
+          ⏱ Se confirma automáticamente en <strong>{{ item.horas }}h</strong>
+        </p>
+        <div class="link-confirmacion-wrap" style="margin-top:0.5rem">
+          <input type="text" class="link-confirmacion-input" value="{{ request.host_url }}confirmar/{{ p.token_conf }}" readonly>
+          <button onclick="copiarLinkElem(this)" class="btn-copiar">Copiar enlace</button>
+        </div>
+      </div>
+      <div class="pendiente-acciones">
+        <a href="{{ request.host_url }}confirmar/{{ p.token_conf }}" target="_blank" class="btn-accion btn-editar">Ver estado</a>
+        <form method="POST" action="/mi-tienda/cancelar-pendiente/{{ p.id }}"
+              onsubmit="return confirm('¿Cancelar esta venta? El artículo volverá al catálogo.')">
+          <button class="btn-accion btn-eliminar">Cancelar</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ══ TABLA DE ARTÍCULOS ══ -->
   <div class="tabla-container">
     <table class="tabla">
       <thead>
@@ -59,7 +110,7 @@
       </thead>
       <tbody>
         {% for prenda in prendas %}
-        <tr class="{% if prenda.vendido %}fila-vendida{% endif %}">
+        <tr class="{% if prenda.vendido %}fila-vendida{% elif prenda.pendiente_conf %}fila-pendiente{% endif %}">
           <td><img src="{{ prenda.imagen_url }}" class="tabla-foto"></td>
           <td>
             <strong>{{ prenda.nombre }}</strong>
@@ -74,6 +125,8 @@
           <td>
             {% if prenda.vendido %}
               <span class="badge badge-rojo">Agotado</span>
+            {% elif prenda.pendiente_conf %}
+              <span class="badge badge-amarillo">⏳ Pendiente</span>
             {% else %}
               <strong style="font-size:1.1rem">{{ prenda.cantidad }}</strong>
               <small> uds</small>
@@ -90,18 +143,22 @@
           <td>
             {% if prenda.vendido %}
               <span class="badge badge-gris">Agotado</span>
+            {% elif prenda.pendiente_conf %}
+              <span class="badge badge-amarillo">Pendiente</span>
+            {% elif prenda.disputado %}
+              <span class="badge badge-rojo">Disputado</span>
             {% else %}
               <span class="badge badge-verde">Disponible</span>
             {% endif %}
           </td>
           <td class="acciones">
             <a href="/mi-tienda/editar/{{ prenda.id }}" class="btn-accion btn-editar">Editar</a>
-            {% if not prenda.vendido %}
-            <form method="POST" action="/mi-tienda/vender/{{ prenda.id }}" style="display:inline"
-                  onsubmit="return confirm('¿Registrar una venta de {{ prenda.nombre }}? Se descontará ${{ '%.2f'|format(prenda.monto_comision) }} de tu wallet.')">
-              <button class="btn-accion btn-vender">Vendido</button>
-            </form>
-            {% else %}
+            {% if not prenda.vendido and not prenda.pendiente_conf %}
+            <button class="btn-accion btn-vender"
+                    onclick="abrirModalVenta('{{ prenda.id }}', '{{ prenda.nombre }}', '{{ '%.2f'|format(prenda.monto_comision) }}')">
+              Vendido
+            </button>
+            {% elif prenda.vendido %}
             <a href="/mi-tienda/editar/{{ prenda.id }}" class="btn-accion btn-disponible">Reabastecer</a>
             {% endif %}
             <form method="POST" action="/mi-tienda/eliminar/{{ prenda.id }}" style="display:inline"
@@ -119,4 +176,57 @@
     </table>
   </div>
 </div>
+
+<!-- ══ MODAL REGISTRO DE VENTA ══ -->
+<div id="modal-venta" class="modal-overlay" style="display:none" onclick="if(event.target===this)cerrarModal()">
+  <div class="modal-cuerpo">
+    <h2 class="modal-titulo">Registrar venta</h2>
+    <p id="modal-desc" style="color:#64748B;font-size:0.9rem;margin-bottom:1.25rem"></p>
+    <form id="form-venta" method="POST">
+      <div class="campo">
+        <label>Nombre del comprador <small>(para identificar la venta)</small></label>
+        <input type="text" name="comprador_nombre" placeholder="Ej: Juan Pérez" required>
+      </div>
+      <p style="font-size:0.82rem;color:#64748B;margin-bottom:1.25rem">
+        Se generará un enlace que debes enviar al comprador por WhatsApp.<br>
+        La comisión se descuenta <strong>solo cuando el comprador confirme</strong> la recepción.
+      </p>
+      <div style="display:flex;gap:0.75rem">
+        <button type="submit" class="btn-primario" style="flex:1">Generar enlace de confirmación</button>
+        <button type="button" onclick="cerrarModal()" class="btn-outline" style="flex:1">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function abrirModalVenta(id, nombre, comision) {
+  document.getElementById('modal-venta').style.display = 'flex';
+  document.getElementById('modal-desc').textContent =
+    'Artículo: ' + nombre + ' — Comisión: $' + comision;
+  document.getElementById('form-venta').action = '/mi-tienda/vender/' + id;
+}
+function cerrarModal() {
+  document.getElementById('modal-venta').style.display = 'none';
+}
+function copiarLink() {
+  const el = document.getElementById('link-conf');
+  el.select();
+  navigator.clipboard.writeText(el.value).then(() => {
+    const btn = el.nextElementSibling;
+    btn.textContent = '¡Copiado!';
+    btn.style.background = '#059669';
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.style.background = ''; }, 2000);
+  });
+}
+function copiarLinkElem(btn) {
+  const input = btn.previousElementSibling;
+  input.select();
+  navigator.clipboard.writeText(input.value).then(() => {
+    btn.textContent = '¡Copiado!';
+    btn.style.background = '#059669';
+    setTimeout(() => { btn.textContent = 'Copiar enlace'; btn.style.background = ''; }, 2000);
+  });
+}
+</script>
 {% endblock %}

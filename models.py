@@ -76,6 +76,12 @@ class Prenda(db.Model):
     vendido           = db.Column(db.Boolean, default=False)
     destacado         = db.Column(db.Boolean, default=False)
     creado_en         = db.Column(db.DateTime, default=datetime.utcnow)
+    # Doble confirmación de venta
+    pendiente_conf    = db.Column(db.Boolean, default=False)
+    token_conf        = db.Column(db.String(40), nullable=True)
+    fecha_pendiente   = db.Column(db.DateTime, nullable=True)
+    comprador_nombre  = db.Column(db.String(100), nullable=True)
+    disputado         = db.Column(db.Boolean, default=False)
 
     @property
     def precio_comprador(self):

@@ -1127,6 +1127,130 @@ img { max-width: 100%; display: block; }
   .btn-banner-hero { width: 100%; text-align: center; }
 }
 
+/* ── Doble confirmación de venta ── */
+.alerta-pendiente-nueva {
+  background: #FFF7ED;
+  border: 2px solid #F59E0B;
+  border-radius: var(--radio-lg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.alerta-pendiente-nueva strong { color: #92400E; display: block; margin-bottom: 0.4rem; }
+.alerta-pendiente-nueva p { color: #78350F; font-size: 0.88rem; margin-bottom: 0.75rem; }
+.link-confirmacion-wrap {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.link-confirmacion-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #FCD34D;
+  border-radius: var(--radio-md);
+  font-size: 0.82rem;
+  background: #FFFBEB;
+  color: #92400E;
+  font-family: monospace;
+  cursor: text;
+}
+.btn-copiar {
+  background: #F59E0B;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transicion);
+}
+.btn-copiar:hover { background: #D97706; }
+
+/* Sección de pendientes */
+.seccion-pendientes {
+  background: #FFFBEB;
+  border: 2px solid #FDE68A;
+  border-radius: var(--radio-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.seccion-pendientes-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #92400E;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.badge-count {
+  background: #F59E0B;
+  color: white;
+  border-radius: 20px;
+  padding: 0.1rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+.card-pendiente {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: white;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radio-md);
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+.card-pendiente:last-child { margin-bottom: 0; }
+.pendiente-foto {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--radio-md);
+  flex-shrink: 0;
+}
+.pendiente-info { flex: 1; }
+.pendiente-info strong { font-size: 0.95rem; color: #0F172A; display: block; margin-bottom: 0.25rem; }
+.pendiente-info p { font-size: 0.82rem; color: #64748B; margin-bottom: 0.1rem; }
+.pendiente-timer { color: #D97706 !important; font-weight: 600 !important; }
+.pendiente-acciones { display: flex; flex-direction: column; gap: 0.4rem; flex-shrink: 0; }
+
+/* Fila pendiente en tabla */
+.fila-pendiente { background: #FFFBEB; }
+
+/* Modal de venta */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+.modal-cuerpo {
+  background: white;
+  border-radius: var(--radio-lg);
+  padding: 2rem;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: var(--sombra-lg);
+}
+.modal-titulo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-oscuro);
+  margin-bottom: 0.5rem;
+  font-family: var(--fuente-titulo);
+}
+
+@media (max-width: 640px) {
+  .card-pendiente { flex-direction: column; }
+  .pendiente-acciones { flex-direction: row; }
+}
+
 @media (max-width: 900px) {
   .beneficios-grid { grid-template-columns: repeat(2, 1fr); }
   .beneficios-grid-3 { grid-template-columns: repeat(2, 1fr); }
