@@ -821,14 +821,14 @@ img { max-width: 100%; display: block; }
   text-align: center;
 }
 .stat-item { display: flex; flex-direction: column; gap: 0.2rem; }
-.stat-numero {
+.landing-stats .stat-numero {
   font-size: 1.8rem;
   font-weight: 800;
   color: #FFD100;
   font-family: var(--fuente-titulo);
   line-height: 1;
 }
-.stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.75); }
+.landing-stats .stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.75); }
 
 .landing-seccion { padding: 4rem 1rem; }
 .landing-seccion-gris { background: var(--color-gris-claro); }
