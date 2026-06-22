@@ -777,6 +777,36 @@ img { max-width: 100%; display: block; }
 .chat-usuario .chat-burbuja { background: var(--color-primario); color: #fff; }
 .chat-admin   .chat-burbuja { background: #fff; color: var(--color-oscuro); border: 1px solid var(--color-borde); }
 .chat-hora { font-size: 0.7rem; color: var(--color-gris); margin-top: 0.2rem; }
+
+/* Burbuja de confirmación de compra */
+.chat-burbuja-confirmacion {
+  background: #EFF6FF;
+  border: 1.5px solid #BFDBFE;
+  color: var(--color-oscuro);
+  max-width: 340px;
+}
+.btn-conf-si {
+  display: inline-block;
+  padding: 0.45rem 1rem;
+  background: #059669;
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.btn-conf-no {
+  display: inline-block;
+  padding: 0.45rem 1rem;
+  background: #DC2626;
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.chat-msg.chat-admin { max-width: 85%; }
+
 .chat-form {
   display: flex;
   gap: 0.75rem;

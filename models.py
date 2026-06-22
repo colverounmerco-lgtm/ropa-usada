@@ -147,3 +147,18 @@ class PreguntaCompra(db.Model):
     texto  = db.Column(db.String(200), nullable=False)
     orden  = db.Column(db.Integer, default=0)
     activa = db.Column(db.Boolean, default=True)
+
+
+class SolicitudCompra(db.Model):
+    __tablename__ = "solicitudes_compra"
+
+    id                   = db.Column(db.Integer, primary_key=True)
+    comprador_id         = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
+    prenda_id            = db.Column(db.Integer, db.ForeignKey("prendas.id"),  nullable=False)
+    fecha_click          = db.Column(db.DateTime, default=datetime.utcnow)
+    confirmacion_enviada = db.Column(db.Boolean,  default=False)
+    confirmado           = db.Column(db.Boolean,  nullable=True)   # None=pendiente True=sí No=no
+    fecha_confirmacion   = db.Column(db.DateTime, nullable=True)
+
+    comprador = db.relationship("Usuario", foreign_keys=[comprador_id], backref="solicitudes_compra")
+    prenda    = db.relationship("Prenda",  foreign_keys=[prenda_id],    backref="solicitudes_compra")

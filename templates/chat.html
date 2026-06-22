@@ -14,13 +14,38 @@
       <p style="font-size:0.85rem;color:#9CA3AF;margin-top:0.5rem">Escríbenos y el administrador te responderá pronto.</p>
     </div>
     {% endif %}
+
     {% for msg in mensajes %}
-    <div class="chat-msg {% if msg.de_admin %}chat-admin{% else %}chat-usuario{% endif %}">
-      <div class="chat-burbuja">{{ msg.contenido }}</div>
-      <div class="chat-hora" data-utc="{{ msg.fecha.strftime('%Y-%m-%dT%H:%M:%S') }}">
-        {% if msg.de_admin %}Soporte{% else %}Tú{% endif %} · <span class="hora-ts">{{ msg.fecha.strftime('%d/%m %H:%M') }}</span>
-      </div>
-    </div>
+      {% if msg.de_admin and msg.contenido.startswith('__CONFIRMAR__:') %}
+        {# Mensaje de confirmación de compra #}
+        {% set partes = msg.contenido.split('\n', 1) %}
+        {% set solicitud_id = partes[0].replace('__CONFIRMAR__:', '') %}
+        {% set texto = partes[1] if partes|length > 1 else '' %}
+        <div class="chat-msg chat-admin">
+          <div class="chat-burbuja chat-burbuja-confirmacion">
+            <p style="font-weight:600;margin-bottom:0.5rem">🛍️ Confirmación de compra</p>
+            <p style="margin-bottom:0.75rem">{{ texto }}</p>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+              <a href="/confirmar-compra/{{ solicitud_id }}/si" class="btn-conf-si">
+                ✅ Sí, compré
+              </a>
+              <a href="/confirmar-compra/{{ solicitud_id }}/no" class="btn-conf-no">
+                ❌ No compré
+              </a>
+            </div>
+          </div>
+          <div class="chat-hora" data-utc="{{ msg.fecha.strftime('%Y-%m-%dT%H:%M:%S') }}">
+            Soporte · <span class="hora-ts">{{ msg.fecha.strftime('%d/%m %H:%M') }}</span>
+          </div>
+        </div>
+      {% else %}
+        <div class="chat-msg {% if msg.de_admin %}chat-admin{% else %}chat-usuario{% endif %}">
+          <div class="chat-burbuja">{{ msg.contenido }}</div>
+          <div class="chat-hora" data-utc="{{ msg.fecha.strftime('%Y-%m-%dT%H:%M:%S') }}">
+            {% if msg.de_admin %}Soporte{% else %}Tú{% endif %} · <span class="hora-ts">{{ msg.fecha.strftime('%d/%m %H:%M') }}</span>
+          </div>
+        </div>
+      {% endif %}
     {% endfor %}
   </div>
 

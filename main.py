@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, send_from_directory
 from functools import wraps
 from config import config
-from models import db, Usuario, Prenda, RecargaWallet, RetiroWallet, MovimientoWallet, Mensaje, PreguntaCompra, COMISION_PORCENTAJE
+from models import db, Usuario, Prenda, RecargaWallet, RetiroWallet, MovimientoWallet, Mensaje, PreguntaCompra, SolicitudCompra, COMISION_PORCENTAJE
 from datetime import datetime, timedelta
 import secrets
 from sqlalchemy import text, inspect as sa_inspect
@@ -103,6 +103,34 @@ def admin_requerido(f):
             return redirect(url_for('index'))
         return f(*args, **kwargs)
     return d
+
+def enviar_confirmaciones_pendientes(usuario_id):
+    limite = datetime.utcnow() - timedelta(minutes=3)
+    pendientes = SolicitudCompra.query.filter(
+        SolicitudCompra.comprador_id == usuario_id,
+        SolicitudCompra.confirmacion_enviada == False,
+        SolicitudCompra.confirmado.is_(None),
+        SolicitudCompra.fecha_click <= limite
+    ).all()
+    for s in pendientes:
+        texto = (
+            f'__CONFIRMAR__:{s.id}\n'
+            f'¿Compraste "{s.prenda.nombre}" (${s.prenda.precio_comprador:.2f})? '
+            f'Confirma si realizaste la compra con el vendedor.'
+        )
+        db.session.add(Mensaje(usuario_id=s.comprador_id, de_admin=True, contenido=texto))
+        s.confirmacion_enviada = True
+    if pendientes:
+        db.session.commit()
+
+@app.before_request
+def verificar_confirmaciones():
+    uid = session.get('usuario_id')
+    if not uid:
+        return
+    u = Usuario.query.get(uid)
+    if u and u.es_comprador:
+        enviar_confirmaciones_pendientes(uid)
 
 @app.context_processor
 def vars_globales():
@@ -222,8 +250,106 @@ def producto(id):
         Prenda.id != id,
         Usuario.wallet_saldo >= 1.0
     ).limit(4).all()
-    preguntas = PreguntaCompra.query.filter_by(activa=True).order_by(PreguntaCompra.orden).all()
-    return render_template('producto.html', prenda=prenda, relacionadas=relacionadas, preguntas=preguntas)
+    return render_template('producto.html', prenda=prenda, relacionadas=relacionadas)
+
+@app.route('/comprar/<int:prenda_id>')
+@login_requerido
+def comprar(prenda_id):
+    prenda   = Prenda.query.get_or_404(prenda_id)
+    usuario  = Usuario.query.get(session['usuario_id'])
+    if prenda.vendido or prenda.cantidad <= 0:
+        flash('Este artículo ya no está disponible.', 'error')
+        return redirect(url_for('producto', id=prenda_id))
+
+    solicitud = SolicitudCompra(comprador_id=usuario.id, prenda_id=prenda.id)
+    db.session.add(solicitud)
+    db.session.commit()
+
+    nombre_tienda = config.NOMBRE_TIENDA
+    msg = (
+        f'Hola! Vi tu publicación *{prenda.nombre}* por ${prenda.precio_comprador:.2f} '
+        f'en {nombre_tienda}.\n\n'
+        f'Mis datos:\n'
+        f'• Nombre: {usuario.nombre}\n'
+        f'• WhatsApp: {usuario.whatsapp}\n'
+        f'• Ciudad: {usuario.ciudad or "—"}\n'
+        f'• Email: {usuario.email}\n\n'
+        f'¿Está disponible?'
+    )
+    import urllib.parse
+    wa_url = f'https://wa.me/{prenda.vendedor.whatsapp}?text={urllib.parse.quote(msg)}'
+    return redirect(wa_url)
+
+@app.route('/confirmar-compra/<int:solicitud_id>/si')
+@login_requerido
+def confirmar_compra_si(solicitud_id):
+    s       = SolicitudCompra.query.get_or_404(solicitud_id)
+    usuario = Usuario.query.get(session['usuario_id'])
+    if s.comprador_id != usuario.id:
+        flash('No tienes permiso para confirmar esta solicitud.', 'error')
+        return redirect(url_for('chat'))
+    if s.confirmado is not None:
+        flash('Esta solicitud ya fue procesada.', 'info')
+        return redirect(url_for('chat'))
+    prenda = s.prenda
+    if prenda.cantidad <= 0 or prenda.vendido:
+        flash('El artículo ya no tiene stock disponible.', 'error')
+        s.confirmado = False
+        s.fecha_confirmacion = datetime.utcnow()
+        db.session.commit()
+        return redirect(url_for('chat'))
+
+    prenda.cantidad          -= 1
+    prenda.unidades_vendidas += 1
+    if prenda.cantidad <= 0:
+        prenda.vendido = True
+
+    vendedor = prenda.vendedor
+    comision = prenda.monto_comision
+    vendedor.wallet_saldo = round(vendedor.wallet_saldo - comision, 2)
+    if vendedor.wallet_saldo < 0:
+        vendedor.wallet_saldo = 0
+    db.session.add(MovimientoWallet(
+        vendedor_id = vendedor.id,
+        tipo        = 'comision',
+        monto       = -comision,
+        descripcion = f'Comisión 10% — "{prenda.nombre}" confirmada por comprador {usuario.nombre}'
+    ))
+
+    s.confirmado         = True
+    s.fecha_confirmacion = datetime.utcnow()
+
+    db.session.add(Mensaje(
+        usuario_id = usuario.id,
+        de_admin   = True,
+        contenido  = f'✅ ¡Gracias por confirmar! La compra de "{prenda.nombre}" quedó registrada.'
+    ))
+    db.session.commit()
+    flash('✅ Compra confirmada. ¡Gracias!', 'success')
+    return redirect(url_for('chat'))
+
+@app.route('/confirmar-compra/<int:solicitud_id>/no')
+@login_requerido
+def confirmar_compra_no(solicitud_id):
+    s       = SolicitudCompra.query.get_or_404(solicitud_id)
+    usuario = Usuario.query.get(session['usuario_id'])
+    if s.comprador_id != usuario.id:
+        flash('No tienes permiso.', 'error')
+        return redirect(url_for('chat'))
+    if s.confirmado is not None:
+        flash('Esta solicitud ya fue procesada.', 'info')
+        return redirect(url_for('chat'))
+
+    s.confirmado         = False
+    s.fecha_confirmacion = datetime.utcnow()
+    db.session.add(Mensaje(
+        usuario_id = usuario.id,
+        de_admin   = True,
+        contenido  = f'Entendido. Si tienes algún problema o dudas, escríbenos aquí y te ayudamos.'
+    ))
+    db.session.commit()
+    flash('Solicitud cancelada.', 'info')
+    return redirect(url_for('chat'))
 
 @app.route('/terminos')
 def terminos():
