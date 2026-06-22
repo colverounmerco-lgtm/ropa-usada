@@ -208,8 +208,9 @@ def index():
 
     query = Prenda.query.join(Usuario).filter(
         Prenda.vendido == False,
+        Prenda.disputado == False,
         Usuario.activo == True,
-        Usuario.wallet_saldo >= 1.0
+        Prenda.precio_vendedor * COMISION_PORCENTAJE <= Usuario.wallet_saldo
     )
     if busqueda:
         query = query.filter(Prenda.nombre.ilike(f'%{busqueda}%'))
@@ -226,13 +227,12 @@ def index():
         query = query.filter(Usuario.ciudad == ciudad)
 
     prendas    = query.order_by(Prenda.destacado.desc(), Prenda.creado_en.desc()).all()
-    categorias = [c[0] for c in db.session.query(Prenda.categoria).join(Usuario).filter(
-        Prenda.vendido == False, Usuario.wallet_saldo >= 1.0).distinct().all()]
-    tallas     = [t[0] for t in db.session.query(Prenda.talla).join(Usuario).filter(
-        Prenda.vendido == False, Usuario.wallet_saldo >= 1.0).distinct().all()]
+    visible = (Prenda.vendido == False,
+               Prenda.precio_vendedor * COMISION_PORCENTAJE <= Usuario.wallet_saldo)
+    categorias = [c[0] for c in db.session.query(Prenda.categoria).join(Usuario).filter(*visible).distinct().all()]
+    tallas     = [t[0] for t in db.session.query(Prenda.talla).join(Usuario).filter(*visible).distinct().all() if t[0]]
     ciudades   = [c[0] for c in db.session.query(Usuario.ciudad).join(Prenda).filter(
-        Prenda.vendido == False, Usuario.wallet_saldo >= 1.0,
-        Usuario.ciudad != None, Usuario.ciudad != '').distinct().all()]
+        *visible, Usuario.ciudad != None, Usuario.ciudad != '').distinct().all()]
 
     return render_template('index.html',
         prendas=prendas, categorias=categorias, tallas=tallas, ciudades=ciudades,
@@ -248,7 +248,7 @@ def producto(id):
         Prenda.categoria == prenda.categoria,
         Prenda.vendido == False,
         Prenda.id != id,
-        Usuario.wallet_saldo >= 1.0
+        Prenda.precio_vendedor * COMISION_PORCENTAJE <= Usuario.wallet_saldo
     ).limit(4).all()
     return render_template('producto.html', prenda=prenda, relacionadas=relacionadas)
 
@@ -567,12 +567,21 @@ def vendedor_dashboard():
             pendientes.append({'prenda': p, 'horas': round(horas, 1)})
         elif p.disputado:
             disputadas.append(p)
+    def producto_visible(p):
+        return (not p.vendido and not p.disputado and not p.pendiente_conf
+                and vendedor.wallet_saldo >= p.monto_comision)
+
+    ocultos = [p for p in prendas
+               if not p.vendido and not p.disputado and not p.pendiente_conf
+               and vendedor.wallet_saldo < p.monto_comision]
+
     return render_template('vendedor/dashboard.html',
         vendedor=vendedor,
         prendas=prendas,
         pendientes=pendientes,
         disputadas=disputadas,
-        disponibles=sum(1 for p in prendas if not p.vendido and not p.pendiente_conf and not p.disputado),
+        ocultos=ocultos,
+        disponibles=sum(1 for p in prendas if producto_visible(p)),
         vendidas=sum(1 for p in prendas if p.vendido),
         total_vendidas=sum(p.unidades_vendidas for p in prendas)
     )

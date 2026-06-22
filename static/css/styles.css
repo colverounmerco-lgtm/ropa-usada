@@ -1278,6 +1278,9 @@ img { max-width: 100%; display: block; }
 /* Fila disputada en tabla */
 .fila-disputada { background: #FEF2F2; }
 
+/* Fila oculta del catálogo por saldo insuficiente */
+.fila-oculta { opacity: 0.55; background: #F9FAFB; }
+
 /* Sección de disputas del vendedor */
 .seccion-disputadas {
   background: #FEF2F2;

@@ -41,10 +41,16 @@
     </div>
   </div>
 
-  {% if vendedor.wallet_saldo <= 0 %}
-  <div class="aviso-comision" style="border-color:#EF4444;background:#FEE2E2;color:#991B1B">
-    ⚠️ Tu wallet está en $0.00 — tus artículos <strong>no aparecen en el catálogo</strong>.
+  {% if ocultos %}
+  <div class="aviso-comision" style="border-color:#EF4444;background:#FEF2F2;color:#991B1B">
+    ⚠️ <strong>{{ ocultos|length }} artículo{% if ocultos|length != 1 %}s{% endif %} oculto{% if ocultos|length != 1 %}s{% endif %} del catálogo</strong>
+    — tu saldo (${{ "%.2f"|format(vendedor.wallet_saldo) }}) no cubre su comisión individual.
     <a href="/wallet/recargar" style="color:#991B1B;font-weight:700;margin-left:0.5rem">Recargar ahora →</a>
+    <ul style="margin:0.5rem 0 0 1rem;font-size:0.85rem">
+      {% for p in ocultos %}
+      <li>{{ p.nombre }} — precio ${{ "%.2f"|format(p.precio_vendedor) }}, comisión necesaria <strong>${{ "%.2f"|format(p.monto_comision) }}</strong></li>
+      {% endfor %}
+    </ul>
   </div>
   {% elif vendedor.wallet_saldo < 2 %}
   <div class="aviso-comision">
@@ -147,7 +153,8 @@
       </thead>
       <tbody>
         {% for prenda in prendas %}
-        <tr class="{% if prenda.vendido %}fila-vendida{% elif prenda.disputado %}fila-disputada{% elif prenda.pendiente_conf %}fila-pendiente{% endif %}">
+        {% set oculto = not prenda.vendido and not prenda.disputado and not prenda.pendiente_conf and vendedor.wallet_saldo < prenda.monto_comision %}
+        <tr class="{% if prenda.vendido %}fila-vendida{% elif prenda.disputado %}fila-disputada{% elif prenda.pendiente_conf %}fila-pendiente{% elif oculto %}fila-oculta{% endif %}">
           <td><img src="{{ prenda.imagen_url }}" class="tabla-foto"></td>
           <td>
             <strong>{{ prenda.nombre }}</strong>
@@ -164,6 +171,8 @@
               <span class="badge badge-rojo">Agotado</span>
             {% elif prenda.pendiente_conf %}
               <span class="badge badge-amarillo">⏳ Pendiente</span>
+            {% elif oculto %}
+              <span class="badge badge-gris" title="Saldo insuficiente para comisión">👁️ Oculto</span>
             {% else %}
               <strong style="font-size:1.1rem">{{ prenda.cantidad }}</strong>
               <small> uds</small>
@@ -184,6 +193,8 @@
               <span class="badge badge-amarillo">Pendiente</span>
             {% elif prenda.disputado %}
               <span class="badge badge-rojo">Disputado</span>
+            {% elif oculto %}
+              <span class="badge badge-gris" title="Necesitas ${{ '%.2f'|format(prenda.monto_comision) }} en wallet">Sin fondos</span>
             {% else %}
               <span class="badge badge-verde">Disponible</span>
             {% endif %}
