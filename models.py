@@ -124,6 +124,7 @@ class RetiroWallet(db.Model):
     datos_bancarios  = db.Column(db.Text, nullable=False)
     estado           = db.Column(db.String(20), default="pendiente")  # pendiente/aprobado/rechazado
     admin_nota       = db.Column(db.Text, nullable=True)
+    comision_retiro  = db.Column(db.Float, default=0.0)
     fecha_solicitud  = db.Column(db.DateTime, default=datetime.utcnow)
     fecha_resolucion = db.Column(db.DateTime, nullable=True)
 
@@ -137,3 +138,12 @@ class MovimientoWallet(db.Model):
     monto       = db.Column(db.Float, nullable=False)
     descripcion = db.Column(db.String(200), nullable=False)
     fecha       = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class PreguntaCompra(db.Model):
+    __tablename__ = "preguntas_compra"
+
+    id     = db.Column(db.Integer, primary_key=True)
+    texto  = db.Column(db.String(200), nullable=False)
+    orden  = db.Column(db.Integer, default=0)
+    activa = db.Column(db.Boolean, default=True)

@@ -10,16 +10,32 @@
     <p class="wallet-monto">${{ "%.2f"|format(vendedor.wallet_saldo) }}</p>
   </div>
 
+  <div class="aviso-comision" style="margin-bottom:1.25rem">
+    ℹ️ Mínimo de retiro: <strong>${{ "%.2f"|format(retiro_minimo) }}</strong> ·
+    Comisión de retiro: <strong>{{ (retiro_comision * 100)|int }}%</strong><br>
+    <small>Ej: Si retiras $10.00, recibirás ${{ "%.2f"|format(10 * (1 - retiro_comision)) }} (se descuenta ${{ "%.2f"|format(10 * retiro_comision) }} de comisión)</small>
+  </div>
+
   {% with mensajes = get_flashed_messages(with_categories=true) %}
     {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
   {% endwith %}
 
-  {% if vendedor.wallet_saldo >= 1 %}
-  <form method="POST" class="form-prenda">
+  {% if vendedor.wallet_saldo >= retiro_minimo %}
+  <form method="POST" class="form-prenda" id="form-retiro">
     <div class="campo">
-      <label>Monto a retirar ($) * <small>(mínimo $1.00, máximo ${{ "%.2f"|format(vendedor.wallet_saldo) }})</small></label>
-      <input type="number" name="monto" min="1" max="{{ vendedor.wallet_saldo }}" step="0.01" placeholder="1.00" required>
+      <label>Monto a retirar ($) * <small>(mínimo ${{ "%.2f"|format(retiro_minimo) }}, máximo ${{ "%.2f"|format(vendedor.wallet_saldo) }})</small></label>
+      <input type="number" name="monto" id="monto-input"
+             min="{{ retiro_minimo }}" max="{{ vendedor.wallet_saldo }}"
+             step="0.01" placeholder="{{ retiro_minimo }}" required
+             oninput="calcularNeto()">
     </div>
+
+    <div id="resumen-retiro" style="display:none;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.88rem">
+      <div style="display:flex;justify-content:space-between"><span>Monto solicitado:</span><span id="r-bruto">—</span></div>
+      <div style="display:flex;justify-content:space-between;color:#DC2626"><span>Comisión ({{ (retiro_comision * 100)|int }}%):</span><span id="r-comision">—</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #BBF7D0;margin-top:0.5rem;padding-top:0.5rem"><span>Recibirás:</span><span id="r-neto" style="color:#059669">—</span></div>
+    </div>
+
     <div class="campo">
       <label>Datos bancarios para la transferencia *</label>
       <textarea name="datos_bancarios" rows="4" required
@@ -32,9 +48,26 @@
   </form>
   {% else %}
     <div class="vacio">
-      <p>No tienes saldo suficiente para retirar (mínimo $1.00)</p>
+      <p>No tienes saldo suficiente para retirar (mínimo ${{ "%.2f"|format(retiro_minimo) }})</p>
       <a href="/wallet/recargar" class="btn-primario">Recargar wallet</a>
     </div>
   {% endif %}
 </div>
+
+<script>
+var comisionPct = {{ retiro_comision }};
+function calcularNeto() {
+  var monto = parseFloat(document.getElementById('monto-input').value) || 0;
+  if (monto > 0) {
+    var comision = Math.round(monto * comisionPct * 100) / 100;
+    var neto = Math.round((monto - comision) * 100) / 100;
+    document.getElementById('r-bruto').textContent    = '$' + monto.toFixed(2);
+    document.getElementById('r-comision').textContent = '-$' + comision.toFixed(2);
+    document.getElementById('r-neto').textContent     = '$' + neto.toFixed(2);
+    document.getElementById('resumen-retiro').style.display = '';
+  } else {
+    document.getElementById('resumen-retiro').style.display = 'none';
+  }
+}
+</script>
 {% endblock %}

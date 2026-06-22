@@ -3,17 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vender en {{ nombre_tienda }}</title>
+  <title>Registrarse — {{ nombre_tienda }}</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/styles.css">
+  <link rel="stylesheet" href="/static/css/styles.css?v=6">
 </head>
 <body class="bg-gris">
-<div class="auth-container">
+<div class="auth-container" style="max-width:480px">
+
   <a href="/" class="logo" style="display:block;text-align:center;margin-bottom:0.5rem">{{ nombre_tienda }}</a>
-  <h1 class="auth-titulo">Registra tu tienda</h1>
-  <p style="text-align:center;color:var(--color-gris);font-size:0.9rem;margin-bottom:1.5rem">
-    Empieza a vender con solo $1 en tu wallet
-  </p>
+
+  <!-- Tabs -->
+  <div class="register-tabs" id="tabs">
+    <button class="register-tab {% if rol_default == 'comprador' %}tab-activo{% endif %}"
+            onclick="cambiarTab('comprador')" type="button">
+      🛍️ Quiero comprar
+    </button>
+    <button class="register-tab {% if rol_default == 'vendedor' %}tab-activo{% endif %}"
+            onclick="cambiarTab('vendedor')" type="button">
+      🏪 Quiero vender
+    </button>
+  </div>
 
   {% with mensajes = get_flashed_messages(with_categories=true) %}
     {% for cat, msg in mensajes %}
@@ -21,65 +30,135 @@
     {% endfor %}
   {% endwith %}
 
-  <form method="POST" class="auth-form">
-    <input type="hidden" name="rol" value="vendedor">
+  <!-- ── FORM COMPRADOR ── -->
+  <div id="form-comprador" {% if rol_default == 'vendedor' %}style="display:none"{% endif %}>
+    <h1 class="auth-titulo" style="margin-top:1rem">Crear cuenta de comprador</h1>
+    <p style="text-align:center;color:var(--color-gris);font-size:0.88rem;margin-bottom:1.25rem">
+      Gratis · Sin comisiones · Compra con seguridad
+    </p>
+    <form method="POST" class="auth-form">
+      <input type="hidden" name="rol" value="comprador">
+      <div class="campo">
+        <label>Nombre completo *</label>
+        <input type="text" name="nombre" required placeholder="Tu nombre">
+      </div>
+      <div class="campo">
+        <label>Correo electrónico *</label>
+        <input type="email" name="email" required placeholder="tu@email.com">
+      </div>
+      <div class="campo">
+        <label>WhatsApp * <small>(con código de país, ej: 593987654321)</small></label>
+        <input type="text" name="whatsapp" required placeholder="593987654321">
+      </div>
+      <div class="campo">
+        <label>Ciudad *</label>
+        <select name="ciudad" required>
+          <option value="">Selecciona tu ciudad</option>
+          <option>Quito</option>
+          <option>Guayaquil</option>
+          <option>Cuenca</option>
+          <option>Manta</option>
+          <option>Ambato</option>
+          <option>Loja</option>
+          <option>Ibarra</option>
+          <option>Riobamba</option>
+          <option>Esmeraldas</option>
+          <option>Machala</option>
+          <option>Santo Domingo</option>
+          <option>Portoviejo</option>
+          <option>Latacunga</option>
+          <option>Milagro</option>
+          <option>Durán</option>
+          <option>Otra</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label>Contraseña * <small>(mínimo 6 caracteres)</small></label>
+        <input type="password" name="password" required minlength="6">
+      </div>
+      <div class="campo campo-check">
+        <label class="check-label">
+          <input type="checkbox" name="terminos" required>
+          Acepto los <a href="/terminos" target="_blank" style="color:var(--color-primario);font-weight:600">Términos y Condiciones</a>
+        </label>
+      </div>
+      <button type="submit" class="btn-primario w-full">Crear cuenta de comprador</button>
+    </form>
+  </div>
 
-    <div class="campo">
-      <label>Nombre completo *</label>
-      <input type="text" name="nombre" required placeholder="Tu nombre">
-    </div>
-    <div class="campo">
-      <label>Email *</label>
-      <input type="email" name="email" required placeholder="tu@email.com">
-    </div>
-    <div class="campo">
-      <label>Contraseña * <small>(mínimo 6 caracteres)</small></label>
-      <input type="password" name="password" required minlength="6">
-    </div>
-    <div class="campo">
-      <label>Tu número de WhatsApp * <small>(con código de país, ej: 593987654321)</small></label>
-      <input type="text" name="whatsapp" required placeholder="593987654321">
-    </div>
-    <div class="campo">
-      <label>Nombre de tu tienda <small>(opcional)</small></label>
-      <input type="text" name="tienda_nombre" placeholder="Ej: La Boutique de Ana">
-    </div>
-    <div class="campo">
-      <label>Ciudad *</label>
-      <select name="ciudad" required>
-        <option value="">Selecciona tu ciudad</option>
-        <option>Quito</option>
-        <option>Guayaquil</option>
-        <option>Cuenca</option>
-        <option>Manta</option>
-        <option>Ambato</option>
-        <option>Loja</option>
-        <option>Ibarra</option>
-        <option>Riobamba</option>
-        <option>Esmeraldas</option>
-        <option>Machala</option>
-        <option>Santo Domingo</option>
-        <option>Portoviejo</option>
-        <option>Latacunga</option>
-        <option>Milagro</option>
-        <option>Durán</option>
-        <option>Otra</option>
-      </select>
-    </div>
+  <!-- ── FORM VENDEDOR ── -->
+  <div id="form-vendedor" {% if rol_default != 'vendedor' %}style="display:none"{% endif %}>
+    <h1 class="auth-titulo" style="margin-top:1rem">Registra tu tienda</h1>
+    <p style="text-align:center;color:var(--color-gris);font-size:0.88rem;margin-bottom:1.25rem">
+      Empieza a vender con solo $1 en tu wallet
+    </p>
+    <form method="POST" class="auth-form">
+      <input type="hidden" name="rol" value="vendedor">
+      <div class="campo">
+        <label>Nombre completo *</label>
+        <input type="text" name="nombre" required placeholder="Tu nombre">
+      </div>
+      <div class="campo">
+        <label>Correo electrónico *</label>
+        <input type="email" name="email" required placeholder="tu@email.com">
+      </div>
+      <div class="campo">
+        <label>WhatsApp * <small>(con código de país, ej: 593987654321)</small></label>
+        <input type="text" name="whatsapp" required placeholder="593987654321">
+      </div>
+      <div class="campo">
+        <label>Nombre de tu tienda <small>(opcional)</small></label>
+        <input type="text" name="tienda_nombre" placeholder="Ej: La Boutique de Ana">
+      </div>
+      <div class="campo">
+        <label>Ciudad *</label>
+        <select name="ciudad" required>
+          <option value="">Selecciona tu ciudad</option>
+          <option>Quito</option>
+          <option>Guayaquil</option>
+          <option>Cuenca</option>
+          <option>Manta</option>
+          <option>Ambato</option>
+          <option>Loja</option>
+          <option>Ibarra</option>
+          <option>Riobamba</option>
+          <option>Esmeraldas</option>
+          <option>Machala</option>
+          <option>Santo Domingo</option>
+          <option>Portoviejo</option>
+          <option>Latacunga</option>
+          <option>Milagro</option>
+          <option>Durán</option>
+          <option>Otra</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label>Contraseña * <small>(mínimo 6 caracteres)</small></label>
+        <input type="password" name="password" required minlength="6">
+      </div>
+      <div class="campo campo-check">
+        <label class="check-label">
+          <input type="checkbox" name="terminos" required>
+          Acepto los <a href="/terminos" target="_blank" style="color:var(--color-primario);font-weight:600">Términos y Condiciones</a>
+          (incluyendo la comisión del 10% por venta)
+        </label>
+      </div>
+      <button type="submit" class="btn-primario w-full">Crear mi tienda gratis</button>
+    </form>
+  </div>
 
-    <div class="campo campo-check">
-      <label class="check-label">
-        <input type="checkbox" name="terminos" required>
-        Acepto los <a href="/terminos" target="_blank" style="color:var(--color-primario);font-weight:600">Términos y Condiciones</a>
-        (incluyendo la comisión del 10% por venta)
-      </label>
-    </div>
-
-    <button type="submit" class="btn-primario w-full">Crear mi tienda gratis</button>
-  </form>
-
-  <p class="auth-link">¿Ya tienes cuenta? <a href="/login">Iniciar sesión</a></p>
-  <p class="auth-link"><a href="/">← Ver catálogo sin registrarse</a></p>
+  <p class="auth-link" style="margin-top:1.25rem">¿Ya tienes cuenta? <a href="/login">Iniciar sesión</a></p>
+  <p class="auth-link"><a href="/">← Volver al catálogo</a></p>
 </div>
+
+<script>
+function cambiarTab(rol) {
+  document.getElementById('form-comprador').style.display = rol === 'comprador' ? '' : 'none';
+  document.getElementById('form-vendedor').style.display  = rol === 'vendedor'  ? '' : 'none';
+  document.querySelectorAll('.register-tab').forEach((t, i) => {
+    t.classList.toggle('tab-activo', (i === 0 && rol === 'comprador') || (i === 1 && rol === 'vendedor'));
+  });
+}
+</script>
 </body>
 </html>

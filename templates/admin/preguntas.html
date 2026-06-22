@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Formulario de compra — Admin{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:2rem">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-titulo">Formulario de validación de compra</h1>
+      <p class="page-sub">Estas preguntas aparecen automáticamente cuando un comprador quiere adquirir un artículo</p>
+    </div>
+    <a href="/admin" class="btn-outline">← Volver al panel</a>
+  </div>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+
+  <!-- Agregar pregunta -->
+  <div class="card-blanca" style="margin-bottom:1.5rem;padding:1.25rem">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:1rem">+ Añadir nueva pregunta</h2>
+    <form method="POST" style="display:flex;gap:0.75rem;align-items:flex-end">
+      <div class="campo" style="flex:1;margin:0">
+        <label>Texto de la pregunta</label>
+        <input type="text" name="texto" required placeholder="Ej: ¿Cuál es tu dirección de entrega?">
+      </div>
+      <button type="submit" class="btn-primario" style="height:42px">Añadir</button>
+    </form>
+  </div>
+
+  <!-- Lista de preguntas -->
+  {% if preguntas %}
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Pregunta</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in preguntas %}
+        <tr {% if not p.activa %}style="opacity:0.5"{% endif %}>
+          <td style="color:#6B7280;font-weight:600">{{ p.orden }}</td>
+          <td><strong>{{ p.texto }}</strong></td>
+          <td>
+            {% if p.activa %}
+              <span class="badge badge-verde">Activa</span>
+            {% else %}
+              <span class="badge badge-gris">Inactiva</span>
+            {% endif %}
+          </td>
+          <td class="acciones">
+            <form method="POST" action="/admin/preguntas/{{ p.id }}/toggle" style="display:inline">
+              <button class="btn-accion btn-editar">
+                {% if p.activa %}Desactivar{% else %}Activar{% endif %}
+              </button>
+            </form>
+            <form method="POST" action="/admin/preguntas/{{ p.id }}/eliminar" style="display:inline"
+                  onsubmit="return confirm('¿Eliminar esta pregunta?')">
+              <button class="btn-accion btn-eliminar">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="vacio" style="margin-top:2rem">
+    <p style="font-size:1.5rem">📋</p>
+    <p>No hay preguntas configuradas. Añade la primera arriba.</p>
+  </div>
+  {% endif %}
+
+  <div class="aviso-comision" style="margin-top:1.5rem">
+    <strong>¿Cómo funciona?</strong><br>
+    Cuando un comprador registrado hace clic en "Comprar" en cualquier artículo, aparece un modal con estas preguntas.
+    Al enviar el formulario, se abre WhatsApp con el vendedor con todas las respuestas del comprador ya incluidas en el mensaje.
+  </div>
+
+</div>
+{% endblock %}

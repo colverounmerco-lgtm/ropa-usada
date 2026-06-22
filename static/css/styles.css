@@ -1285,6 +1285,49 @@ img { max-width: 100%; display: block; }
   .pendiente-acciones { flex-direction: row; }
 }
 
+/* ── Tabs de registro ── */
+.register-tabs {
+  display: flex;
+  border-radius: var(--radio-md);
+  overflow: hidden;
+  border: 1px solid var(--color-borde);
+  margin-bottom: 0.5rem;
+}
+.register-tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--color-gris);
+  transition: background 0.15s, color 0.15s;
+}
+.register-tab.tab-activo {
+  background: var(--color-primario);
+  color: white;
+  font-weight: 700;
+}
+
+/* ── Aviso registro para comprar ── */
+.aviso-registro-compra {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: var(--radio-md);
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  color: #1E40AF;
+}
+.aviso-registro-compra p { margin: 0; font-weight: 600; }
+
+/* ── Card blanca genérica ── */
+.card-blanca {
+  background: white;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
 @media (max-width: 900px) {
   .beneficios-grid { grid-template-columns: repeat(2, 1fr); }
   .beneficios-grid-3 { grid-template-columns: repeat(2, 1fr); }

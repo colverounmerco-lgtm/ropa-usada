@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, send_from_directory
 from functools import wraps
 from config import config
-from models import db, Usuario, Prenda, RecargaWallet, RetiroWallet, MovimientoWallet, Mensaje, COMISION_PORCENTAJE
+from models import db, Usuario, Prenda, RecargaWallet, RetiroWallet, MovimientoWallet, Mensaje, PreguntaCompra, COMISION_PORCENTAJE
 from datetime import datetime, timedelta
 import secrets
 from sqlalchemy import text, inspect as sa_inspect
@@ -50,6 +50,11 @@ with app.app_context():
             if col not in cols_prendas:
                 conn.execute(text(ddl))
                 conn.commit()
+        # comision_retiro en retiros_wallet
+        cols_retiros = [c['name'] for c in sa_inspect(db.engine).get_columns('retiros_wallet')]
+        if 'comision_retiro' not in cols_retiros:
+            conn.execute(text("ALTER TABLE retiros_wallet ADD COLUMN comision_retiro FLOAT DEFAULT 0"))
+            conn.commit()
     if not Usuario.query.filter_by(rol='admin').first():
         admin = Usuario(nombre='Admin', email=config.ADMIN_EMAIL, rol='admin')
         admin.set_password(config.ADMIN_PASSWORD)
@@ -176,7 +181,7 @@ def index():
     query = Prenda.query.join(Usuario).filter(
         Prenda.vendido == False,
         Usuario.activo == True,
-        Usuario.wallet_saldo > 0
+        Usuario.wallet_saldo >= 1.0
     )
     if busqueda:
         query = query.filter(Prenda.nombre.ilike(f'%{busqueda}%'))
@@ -194,11 +199,11 @@ def index():
 
     prendas    = query.order_by(Prenda.destacado.desc(), Prenda.creado_en.desc()).all()
     categorias = [c[0] for c in db.session.query(Prenda.categoria).join(Usuario).filter(
-        Prenda.vendido == False, Usuario.wallet_saldo > 0).distinct().all()]
+        Prenda.vendido == False, Usuario.wallet_saldo >= 1.0).distinct().all()]
     tallas     = [t[0] for t in db.session.query(Prenda.talla).join(Usuario).filter(
-        Prenda.vendido == False, Usuario.wallet_saldo > 0).distinct().all()]
+        Prenda.vendido == False, Usuario.wallet_saldo >= 1.0).distinct().all()]
     ciudades   = [c[0] for c in db.session.query(Usuario.ciudad).join(Prenda).filter(
-        Prenda.vendido == False, Usuario.wallet_saldo > 0,
+        Prenda.vendido == False, Usuario.wallet_saldo >= 1.0,
         Usuario.ciudad != None, Usuario.ciudad != '').distinct().all()]
 
     return render_template('index.html',
@@ -215,9 +220,10 @@ def producto(id):
         Prenda.categoria == prenda.categoria,
         Prenda.vendido == False,
         Prenda.id != id,
-        Usuario.wallet_saldo > 0
+        Usuario.wallet_saldo >= 1.0
     ).limit(4).all()
-    return render_template('producto.html', prenda=prenda, relacionadas=relacionadas)
+    preguntas = PreguntaCompra.query.filter_by(activa=True).order_by(PreguntaCompra.orden).all()
+    return render_template('producto.html', prenda=prenda, relacionadas=relacionadas, preguntas=preguntas)
 
 @app.route('/terminos')
 def terminos():
@@ -229,36 +235,34 @@ def terminos():
 def register():
     if session.get('usuario_id'):
         return redirect(url_for('index'))
+    rol_default = request.args.get('rol', 'comprador')
     if request.method == 'POST':
-        rol      = request.form.get('rol')
+        rol      = request.form.get('rol', 'comprador').strip()
+        if rol not in ('vendedor', 'comprador'):
+            rol = 'comprador'
         nombre   = request.form.get('nombre', '').strip()
         email    = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
+        whatsapp = request.form.get('whatsapp', '').strip()
+        ciudad   = request.form.get('ciudad', '').strip()
 
-        rol = 'vendedor'
-        if not all([rol, nombre, email, password]):
-            flash('Completa todos los campos', 'error')
-            return render_template('auth/register.html')
+        if not all([nombre, email, password, whatsapp, ciudad]):
+            flash('Completa todos los campos obligatorios', 'error')
+            return render_template('auth/register.html', rol_default=rol)
         if len(password) < 6:
             flash('La contraseña debe tener al menos 6 caracteres', 'error')
-            return render_template('auth/register.html')
+            return render_template('auth/register.html', rol_default=rol)
         if Usuario.query.filter_by(email=email).first():
             flash('Este email ya está registrado', 'error')
-            return render_template('auth/register.html')
+            return render_template('auth/register.html', rol_default=rol)
 
-        usuario = Usuario(nombre=nombre, email=email, rol=rol)
+        usuario = Usuario(nombre=nombre, email=email, rol=rol,
+                          whatsapp=whatsapp, ciudad=ciudad)
         usuario.set_password(password)
 
         if rol == 'vendedor':
-            whatsapp = request.form.get('whatsapp', '').strip()
-            tienda   = request.form.get('tienda_nombre', '').strip()
-            ciudad   = request.form.get('ciudad', '').strip()
-            if not whatsapp:
-                flash('Los vendedores deben ingresar su número de WhatsApp', 'error')
-                return render_template('auth/register.html')
-            usuario.whatsapp      = whatsapp
+            tienda = request.form.get('tienda_nombre', '').strip()
             usuario.tienda_nombre = tienda or nombre
-            usuario.ciudad        = ciudad
 
         db.session.add(usuario)
         db.session.commit()
@@ -271,7 +275,7 @@ def register():
             return redirect(url_for('wallet_recargar'))
         return redirect(url_for('index'))
 
-    return render_template('auth/register.html')
+    return render_template('auth/register.html', rol_default=rol_default)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -348,35 +352,48 @@ def wallet_recargar():
 
     return render_template('vendedor/recargar.html', vendedor=vendedor)
 
+RETIRO_MINIMO   = 5.0
+RETIRO_COMISION = 0.04
+
 @app.route('/wallet/retirar', methods=['GET', 'POST'])
 @vendedor_requerido
 def wallet_retirar():
     vendedor = Usuario.query.get(session['usuario_id'])
     if request.method == 'POST':
-        monto           = float(request.form.get('monto', 0))
+        try:
+            monto = round(float(request.form.get('monto', 0)), 2)
+        except ValueError:
+            monto = 0.0
         datos_bancarios = request.form.get('datos_bancarios', '').strip()
 
-        if monto < 1.0:
-            flash('El monto mínimo de retiro es $1.00', 'error')
-            return render_template('vendedor/retirar.html', vendedor=vendedor)
+        if monto < RETIRO_MINIMO:
+            flash(f'El monto mínimo de retiro es ${RETIRO_MINIMO:.2f}', 'error')
+            return render_template('vendedor/retirar.html', vendedor=vendedor,
+                                   retiro_minimo=RETIRO_MINIMO, retiro_comision=RETIRO_COMISION)
         if monto > vendedor.wallet_saldo:
             flash(f'Saldo insuficiente. Tu saldo es ${vendedor.wallet_saldo:.2f}', 'error')
-            return render_template('vendedor/retirar.html', vendedor=vendedor)
+            return render_template('vendedor/retirar.html', vendedor=vendedor,
+                                   retiro_minimo=RETIRO_MINIMO, retiro_comision=RETIRO_COMISION)
         if not datos_bancarios:
             flash('Ingresa tus datos bancarios para el retiro', 'error')
-            return render_template('vendedor/retirar.html', vendedor=vendedor)
+            return render_template('vendedor/retirar.html', vendedor=vendedor,
+                                   retiro_minimo=RETIRO_MINIMO, retiro_comision=RETIRO_COMISION)
 
+        comision = round(monto * RETIRO_COMISION, 2)
         retiro = RetiroWallet(
             vendedor_id=vendedor.id,
             monto=monto,
+            comision_retiro=comision,
             datos_bancarios=datos_bancarios
         )
         db.session.add(retiro)
         db.session.commit()
-        flash('✅ Solicitud de retiro enviada. El administrador la procesará pronto.', 'success')
+        neto = round(monto - comision, 2)
+        flash(f'✅ Solicitud de retiro enviada. Recibirás ${neto:.2f} (${monto:.2f} − 4% de comisión).', 'success')
         return redirect(url_for('wallet'))
 
-    return render_template('vendedor/retirar.html', vendedor=vendedor)
+    return render_template('vendedor/retirar.html', vendedor=vendedor,
+                           retiro_minimo=RETIRO_MINIMO, retiro_comision=RETIRO_COMISION)
 
 # ─── HELPERS CONFIRMACIÓN ─────────────────────
 
@@ -674,16 +691,18 @@ def admin_aprobar_retiro(id):
     retiro.estado            = 'aprobado'
     retiro.fecha_resolucion  = datetime.utcnow()
     retiro.vendedor.wallet_saldo = round(retiro.vendedor.wallet_saldo - retiro.monto, 2)
+    comision = retiro.comision_retiro or 0.0
+    neto     = round(retiro.monto - comision, 2)
 
     mov = MovimientoWallet(
         vendedor_id = retiro.vendedor_id,
         tipo        = 'retiro',
         monto       = -retiro.monto,
-        descripcion = f'Retiro aprobado por admin'
+        descripcion = f'Retiro aprobado — neto ${neto:.2f} (comisión 4%: ${comision:.2f})'
     )
     db.session.add(mov)
     db.session.commit()
-    flash(f'✅ Retiro de ${retiro.monto:.2f} aprobado', 'success')
+    flash(f'✅ Retiro aprobado. Vendedor recibe ${neto:.2f} (comisión ${comision:.2f})', 'success')
     return redirect(url_for('admin_retiros'))
 
 @app.route('/admin/retiros/rechazar/<int:id>', methods=['POST'])
@@ -742,6 +761,39 @@ def admin_disputas_cancelar(id):
     db.session.commit()
     flash(f'❌ Venta cancelada. "{prenda.nombre}" vuelve al catálogo sin cargo al vendedor.', 'info')
     return redirect(url_for('admin_disputas'))
+
+# ─── ADMIN PREGUNTAS ──────────────────────────
+
+@app.route('/admin/preguntas', methods=['GET', 'POST'])
+@admin_requerido
+def admin_preguntas():
+    if request.method == 'POST':
+        texto = request.form.get('texto', '').strip()
+        if texto:
+            orden = db.session.query(db.func.max(PreguntaCompra.orden)).scalar() or 0
+            db.session.add(PreguntaCompra(texto=texto, orden=orden + 1))
+            db.session.commit()
+            flash('✅ Pregunta añadida', 'success')
+        return redirect(url_for('admin_preguntas'))
+    preguntas = PreguntaCompra.query.order_by(PreguntaCompra.orden).all()
+    return render_template('admin/preguntas.html', preguntas=preguntas)
+
+@app.route('/admin/preguntas/<int:id>/eliminar', methods=['POST'])
+@admin_requerido
+def admin_preguntas_eliminar(id):
+    p = PreguntaCompra.query.get_or_404(id)
+    db.session.delete(p)
+    db.session.commit()
+    flash('Pregunta eliminada', 'info')
+    return redirect(url_for('admin_preguntas'))
+
+@app.route('/admin/preguntas/<int:id>/toggle', methods=['POST'])
+@admin_requerido
+def admin_preguntas_toggle(id):
+    p = PreguntaCompra.query.get_or_404(id)
+    p.activa = not p.activa
+    db.session.commit()
+    return redirect(url_for('admin_preguntas'))
 
 # ─── CHAT ─────────────────────────────────────
 
