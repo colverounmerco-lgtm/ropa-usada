@@ -721,33 +721,59 @@ img { max-width: 100%; display: block; }
 /* ─── Chat flotante ─── */
 .chat-flotante {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radio-md);
-  background: var(--color-primario);
+  bottom: 1.75rem;
+  right: 1.75rem;
+  width: auto;
+  height: 54px;
+  padding: 0 1.1rem 0 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #25D366, #128C7E);
   color: #fff;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(30,58,95,0.4);
+  gap: 0.45rem;
+  box-shadow: 0 6px 24px rgba(18,140,126,0.55), 0 2px 8px rgba(0,0,0,0.18);
   text-decoration: none;
   z-index: 1000;
-  transition: transform 0.2s, background 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: chat-pulse 2.8s ease-in-out infinite;
 }
-.chat-flotante:hover { background: var(--color-primario-hover); transform: translateY(-2px); }
+.chat-flotante::after {
+  content: 'Soporte';
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  opacity: 0.95;
+}
+.chat-flotante:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 10px 32px rgba(18,140,126,0.6), 0 3px 10px rgba(0,0,0,0.2);
+}
+@keyframes chat-pulse {
+  0%,100% { box-shadow: 0 6px 24px rgba(18,140,126,0.55), 0 0 0 0 rgba(37,211,102,0.5); }
+  50%      { box-shadow: 0 6px 24px rgba(18,140,126,0.55), 0 0 0 10px rgba(37,211,102,0); }
+}
 .chat-badge {
   position: absolute;
-  top: -5px; right: -5px;
+  top: -6px; right: -4px;
   background: #DC2626;
   color: #fff;
-  border-radius: 4px;
+  border-radius: 999px;
   font-size: 0.68rem;
   font-weight: 700;
-  width: 18px; height: 18px;
+  min-width: 20px; height: 20px;
+  padding: 0 4px;
   display: flex; align-items: center; justify-content: center;
+  border: 2px solid white;
+  animation: badge-bounce 0.4s ease;
+}
+@keyframes badge-bounce {
+  0%   { transform: scale(0); }
+  70%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
 }
 
 /* ─── Chat page ─── */
