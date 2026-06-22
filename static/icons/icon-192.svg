@@ -3,76 +3,81 @@
   <rect width="192" height="192" rx="32" fill="#1E3A5F"/>
 
   <!-- Bandera Ecuador: amarillo 50%, azul 25%, rojo 25% -->
-  <clipPath id="flag192">
-    <rect x="20" y="18" width="152" height="76" rx="8"/>
-  </clipPath>
+  <defs>
+    <clipPath id="flag192"><rect x="20" y="18" width="152" height="76" rx="8"/></clipPath>
+    <clipPath id="ov192"><ellipse cx="96" cy="57" rx="14" ry="17"/></clipPath>
+  </defs>
   <g clip-path="url(#flag192)">
     <rect x="20" y="18" width="152" height="38" fill="#FFD100"/>
     <rect x="20" y="56" width="152" height="19" fill="#003DA5"/>
     <rect x="20" y="75" width="152" height="19" fill="#CE1126"/>
   </g>
 
-  <!-- Escudo Nacional del Ecuador -->
-  <defs>
-    <clipPath id="ov192"><ellipse cx="96" cy="57" rx="13" ry="16"/></clipPath>
-  </defs>
-
   <!-- Ramas de laurel izquierda -->
-  <path d="M82,73 Q77,60 79,44" fill="none" stroke="#2D6A1F" stroke-width="1.8"/>
-  <ellipse cx="79" cy="70" rx="4.5" ry="2" transform="rotate(-35 79 70)" fill="#2D6A1F"/>
-  <ellipse cx="78" cy="62" rx="4.5" ry="2" transform="rotate(-55 78 62)" fill="#2D6A1F"/>
-  <ellipse cx="78" cy="54" rx="4" ry="1.8" transform="rotate(-70 78 54)" fill="#2D6A1F"/>
-  <ellipse cx="79" cy="47" rx="3.5" ry="1.5" transform="rotate(-80 79 47)" fill="#2D6A1F"/>
+  <path d="M81,75 Q76,61 78,44" fill="none" stroke="#2D6A1F" stroke-width="1.8"/>
+  <ellipse cx="77.5" cy="72" rx="5" ry="2.2" transform="rotate(-42,77.5,72)" fill="#2D6A1F"/>
+  <ellipse cx="76.5" cy="63.5" rx="5" ry="2.2" transform="rotate(-56,76.5,63.5)" fill="#2D6A1F"/>
+  <ellipse cx="77" cy="55" rx="4.5" ry="2" transform="rotate(-68,77,55)" fill="#2D6A1F"/>
+  <ellipse cx="78.5" cy="47.5" rx="3.8" ry="1.8" transform="rotate(-76,78.5,47.5)" fill="#2D6A1F"/>
 
   <!-- Ramas de palma derecha -->
-  <path d="M110,73 Q115,60 113,44" fill="none" stroke="#1E5C16" stroke-width="1.8"/>
-  <ellipse cx="113" cy="70" rx="4.5" ry="2" transform="rotate(35 113 70)" fill="#1E5C16"/>
-  <ellipse cx="114" cy="62" rx="4.5" ry="2" transform="rotate(55 114 62)" fill="#1E5C16"/>
-  <ellipse cx="114" cy="54" rx="4" ry="1.8" transform="rotate(70 114 54)" fill="#1E5C16"/>
-  <ellipse cx="113" cy="47" rx="3.5" ry="1.5" transform="rotate(80 113 47)" fill="#1E5C16"/>
+  <path d="M111,75 Q116,61 114,44" fill="none" stroke="#1E5C16" stroke-width="1.8"/>
+  <ellipse cx="114.5" cy="72" rx="5" ry="2.2" transform="rotate(42,114.5,72)" fill="#1E5C16"/>
+  <ellipse cx="115.5" cy="63.5" rx="5" ry="2.2" transform="rotate(56,115.5,63.5)" fill="#1E5C16"/>
+  <ellipse cx="115" cy="55" rx="4.5" ry="2" transform="rotate(68,115,55)" fill="#1E5C16"/>
+  <ellipse cx="113.5" cy="47.5" rx="3.8" ry="1.8" transform="rotate(76,113.5,47.5)" fill="#1E5C16"/>
 
   <!-- Fondo blanco del óvalo -->
-  <ellipse cx="96" cy="57" rx="13.5" ry="16.5" fill="white"/>
+  <ellipse cx="96" cy="57" rx="14.5" ry="17.5" fill="white"/>
 
-  <!-- Interior del escudo (clipeado al óvalo) -->
+  <!-- Interior del escudo -->
   <g clip-path="url(#ov192)">
     <!-- Cielo azul claro -->
-    <rect x="83" y="41" width="26" height="16" fill="#5BABD9"/>
-    <!-- Mar azul oscuro -->
-    <rect x="83" y="57" width="26" height="16" fill="#1B4F8A"/>
-    <!-- Sol en el horizonte -->
-    <circle cx="96" cy="57" r="5.5" fill="#FFD700"/>
+    <rect x="82" y="40" width="28" height="14" fill="#5BABD9"/>
+    <!-- Sol -->
+    <circle cx="96" cy="48" r="6.5" fill="#FFD700" opacity="0.93"/>
     <!-- Chimborazo -->
-    <polygon points="96,45 84,66 108,66" fill="#7A8C9E"/>
-    <polygon points="96,45 91,55 101,55" fill="white"/>
-    <polygon points="96,45 93.5,50 98.5,50" fill="#EEF2F7"/>
-    <!-- Barco a vapor Guayas -->
-    <rect x="87" y="66" width="18" height="6" rx="1.5" fill="#2C1810"/>
-    <rect x="91" y="62" width="2.5" height="5" fill="#3D2410"/>
-    <rect x="95.5" y="62" width="2.5" height="5" fill="#3D2410"/>
-    <circle cx="92" cy="61" r="1.2" fill="#999" opacity="0.8"/>
-    <circle cx="96.5" cy="61" r="1.2" fill="#999" opacity="0.8"/>
-    <circle cx="89" cy="69.5" r="1" fill="#5BABD9"/>
-    <circle cx="96" cy="69.5" r="1" fill="#5BABD9"/>
-    <circle cx="103" cy="69.5" r="1" fill="#5BABD9"/>
+    <polygon points="96,49 83,68 109,68" fill="#7A8C9E"/>
+    <!-- Nieve -->
+    <polygon points="96,49 91.5,56.5 100.5,56.5" fill="#E8F0F7"/>
+    <polygon points="96,49 93.5,53 98.5,53" fill="white"/>
+    <!-- Mar azul -->
+    <rect x="82" y="62" width="28" height="12" fill="#1B5090"/>
+    <!-- Barco Guayas -->
+    <rect x="86" y="61" width="20" height="5" rx="1.5" fill="#5C3A1A"/>
+    <rect x="92" y="56.5" width="3" height="5.5" fill="#4A2D10"/>
+    <rect x="98" y="56.5" width="3" height="5.5" fill="#4A2D10"/>
+    <!-- Chimeneas -->
+    <circle cx="93.5" cy="55.5" r="1.5" fill="#888" opacity="0.8"/>
+    <circle cx="99.5" cy="55.5" r="1.5" fill="#888" opacity="0.8"/>
+    <!-- Olas -->
+    <path d="M84,66 Q87,64.5 90,66 Q93,67.5 96,66 Q99,64.5 102,66 Q105,67.5 108,66" stroke="white" stroke-width="0.8" fill="none" opacity="0.5"/>
   </g>
 
   <!-- Borde dorado del óvalo -->
-  <ellipse cx="96" cy="57" rx="13.5" ry="16.5" fill="none" stroke="#C8A84B" stroke-width="1.8"/>
+  <ellipse cx="96" cy="57" rx="14.5" ry="17.5" fill="none" stroke="#C8A030" stroke-width="2"/>
 
-  <!-- Cóndor encima del escudo -->
-  <!-- Alas extendidas -->
-  <path d="M80,41 Q87,36 96,38.5 Q105,36 112,41 Q105,45 96,42.5 Q87,45 80,41Z" fill="#1A1A1A"/>
-  <!-- Cuerpo -->
-  <ellipse cx="96" cy="41" rx="5.5" ry="4" fill="#1A1A1A"/>
-  <!-- Cabeza dorada (cóndor tiene collar blanco y cresta rojiza) -->
-  <circle cx="96" cy="35.5" r="3.5" fill="#C8A084"/>
-  <!-- Cuello blanco -->
-  <ellipse cx="96" cy="39" rx="2.5" ry="2" fill="white"/>
+  <!-- CÓNDOR: alas alzadas sobre el escudo -->
+  <!-- Ala izquierda (barre hacia arriba-izquierda) -->
+  <path d="M96,42 C93,40 89,37 83.5,38.5 C86.5,37.5 91,39.5 96,42Z" fill="#111"/>
+  <!-- Ala derecha -->
+  <path d="M96,42 C99,40 103,37 108.5,38.5 C105.5,37.5 101,39.5 96,42Z" fill="#111"/>
+  <!-- Plumas izquierda (detalles) -->
+  <path d="M84.5,39.5 C87.5,38 91.5,39.5 96,42 C91,40.5 86.5,40.5 84.5,39.5Z" fill="#222" opacity="0.6"/>
+  <!-- Plumas derecha -->
+  <path d="M107.5,39.5 C104.5,38 100.5,39.5 96,42 C101,40.5 105.5,40.5 107.5,39.5Z" fill="#222" opacity="0.6"/>
+  <!-- Cuerpo del cóndor -->
+  <ellipse cx="96" cy="42.5" rx="6" ry="4.5" fill="#1A1A1A"/>
+  <!-- Cabeza (dorado-anaranjado, cóndor tiene cabeza sin plumas) -->
+  <circle cx="96" cy="35.5" r="4" fill="#C8844A"/>
+  <!-- Ojo -->
+  <circle cx="97.2" cy="35" r="1.2" fill="#111"/>
   <!-- Pico -->
-  <path d="M96,33 Q99.5,35 97.5,38.5" fill="#1A1A1A"/>
+  <path d="M97,37 Q100,36.5 98.5,39" stroke="#8B6914" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <!-- Collar blanco (característica del cóndor andino) -->
+  <path d="M91.5,40.5 Q96,43.5 100.5,40.5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
 
-  <!-- Bolsa de compras blanca -->
+  <!-- Bolsa de compras blanca (ícono de la tienda) -->
   <path d="M74 116 Q74 96 96 96 Q118 96 118 116" fill="none" stroke="white" stroke-width="10" stroke-linecap="round"/>
   <rect x="48" y="116" width="96" height="60" rx="10" fill="white"/>
   <rect x="48" y="130" width="96" height="4" rx="2" fill="#CBD5E1"/>
