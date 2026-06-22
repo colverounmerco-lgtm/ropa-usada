@@ -1219,6 +1219,40 @@ img { max-width: 100%; display: block; }
 /* Fila pendiente en tabla */
 .fila-pendiente { background: #FFFBEB; }
 
+/* Fila disputada en tabla */
+.fila-disputada { background: #FEF2F2; }
+
+/* Sección de disputas del vendedor */
+.seccion-disputadas {
+  background: #FEF2F2;
+  border: 2px solid #FECACA;
+  border-radius: var(--radio-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.seccion-disputadas-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #DC2626;
+  margin: 0 0 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.seccion-disputadas-desc {
+  font-size: 0.85rem;
+  color: #7F1D1D;
+  margin-bottom: 1rem;
+}
+.badge-count-rojo {
+  background: #DC2626;
+  color: white;
+}
+.card-disputada {
+  border-color: #FECACA !important;
+  background: white;
+}
+
 /* Modal de venta */
 .modal-overlay {
   position: fixed;

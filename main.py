@@ -417,15 +417,19 @@ def vendedor_dashboard():
     prendas   = Prenda.query.filter_by(vendedor_id=vendedor.id).order_by(Prenda.creado_en.desc()).all()
     now       = datetime.utcnow()
     pendientes = []
+    disputadas = []
     for p in prendas:
         if p.pendiente_conf and p.fecha_pendiente:
             horas = max(0, 48 - (now - p.fecha_pendiente).total_seconds() / 3600)
             pendientes.append({'prenda': p, 'horas': round(horas, 1)})
+        elif p.disputado:
+            disputadas.append(p)
     return render_template('vendedor/dashboard.html',
         vendedor=vendedor,
         prendas=prendas,
         pendientes=pendientes,
-        disponibles=sum(1 for p in prendas if not p.vendido and not p.pendiente_conf),
+        disputadas=disputadas,
+        disponibles=sum(1 for p in prendas if not p.vendido and not p.pendiente_conf and not p.disputado),
         vendidas=sum(1 for p in prendas if p.vendido),
         total_vendidas=sum(p.unidades_vendidas for p in prendas)
     )

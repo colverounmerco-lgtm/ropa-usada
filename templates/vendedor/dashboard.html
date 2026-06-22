@@ -92,6 +92,43 @@
   </div>
   {% endif %}
 
+  <!-- ══ VENTAS EN DISPUTA ══ -->
+  {% if disputadas %}
+  <div class="seccion-disputadas">
+    <h2 class="seccion-disputadas-titulo">
+      ⚠️ Ventas en disputa
+      <span class="badge-count badge-count-rojo">{{ disputadas|length }}</span>
+    </h2>
+    <p class="seccion-disputadas-desc">
+      El comprador reportó no haber recibido el artículo. El administrador revisará y resolverá cada caso.
+      <strong>No se descuenta comisión hasta que se resuelva.</strong>
+    </p>
+    {% for p in disputadas %}
+    <div class="card-pendiente card-disputada">
+      <img src="{{ p.imagen_url }}" class="pendiente-foto" alt="{{ p.nombre }}">
+      <div class="pendiente-info">
+        <strong>{{ p.nombre }}</strong>
+        <p>Comprador: <em>{{ p.comprador_nombre or '—' }}</em></p>
+        <p style="color:#DC2626;font-size:0.85rem;font-weight:600;margin-top:0.25rem">
+          🔴 Disputa activa — el admin resolverá pronto
+        </p>
+        {% if p.fecha_pendiente %}
+        <p style="color:#6B7280;font-size:0.8rem">
+          Venta registrada el
+          <span data-utc="{{ p.fecha_pendiente.strftime('%Y-%m-%dT%H:%M:%S') }}">
+            <span class="hora-ts">{{ p.fecha_pendiente.strftime('%d/%m/%Y') }}</span>
+          </span>
+        </p>
+        {% endif %}
+      </div>
+      <div class="pendiente-acciones">
+        <span class="badge badge-rojo" style="font-size:0.85rem;padding:0.4rem 0.8rem">En revisión</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <!-- ══ TABLA DE ARTÍCULOS ══ -->
   <div class="tabla-container">
     <table class="tabla">
@@ -110,7 +147,7 @@
       </thead>
       <tbody>
         {% for prenda in prendas %}
-        <tr class="{% if prenda.vendido %}fila-vendida{% elif prenda.pendiente_conf %}fila-pendiente{% endif %}">
+        <tr class="{% if prenda.vendido %}fila-vendida{% elif prenda.disputado %}fila-disputada{% elif prenda.pendiente_conf %}fila-pendiente{% endif %}">
           <td><img src="{{ prenda.imagen_url }}" class="tabla-foto"></td>
           <td>
             <strong>{{ prenda.nombre }}</strong>
