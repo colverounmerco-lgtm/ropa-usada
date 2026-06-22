@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Disputas — Admin{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:2rem">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-titulo">Disputas de ventas</h1>
+      <p class="page-sub">El comprador reportó no haber recibido el artículo</p>
+    </div>
+    <a href="/admin" class="btn-outline">← Volver al panel</a>
+  </div>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in mensajes %}<div class="alerta alerta-{{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+
+  {% if disputas %}
+  <div class="tabla-container">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Foto</th>
+          <th>Artículo</th>
+          <th>Vendedor</th>
+          <th>Comprador reportado</th>
+          <th>Precio</th>
+          <th>Fecha de venta</th>
+          <th>Resolución</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for prenda in disputas %}
+        <tr style="background:#FEF2F2">
+          <td><img src="{{ prenda.imagen_url }}" class="tabla-foto"></td>
+          <td>
+            <strong>{{ prenda.nombre }}</strong><br>
+            <small style="color:#6B7280">{{ prenda.categoria }}</small>
+          </td>
+          <td>
+            <strong>{{ prenda.vendedor.tienda_nombre or prenda.vendedor.nombre }}</strong><br>
+            <small>📱 {{ prenda.vendedor.whatsapp or '—' }}</small><br>
+            <small>✉️ {{ prenda.vendedor.email }}</small>
+          </td>
+          <td>
+            <strong>{{ prenda.comprador_nombre or '—' }}</strong>
+          </td>
+          <td>
+            <div>${{ "%.2f"|format(prenda.precio_comprador) }}</div>
+            <small style="color:#6B7280">Comisión: ${{ "%.2f"|format(prenda.monto_comision) }}</small>
+          </td>
+          <td>
+            {% if prenda.fecha_pendiente %}
+              <span data-utc="{{ prenda.fecha_pendiente.strftime('%Y-%m-%dT%H:%M:%S') }}">
+                <span class="hora-ts">{{ prenda.fecha_pendiente.strftime('%d/%m/%Y') }}</span>
+              </span>
+            {% else %}—{% endif %}
+          </td>
+          <td class="acciones" style="min-width:180px">
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
+              <form method="POST" action="/admin/disputas/{{ prenda.id }}/confirmar"
+                    onsubmit="return confirm('¿Confirmar la venta? Se descontará la comisión al vendedor.')">
+                <button class="btn-accion btn-vender" style="width:100%">
+                  ✅ Confirmar venta
+                </button>
+              </form>
+              <form method="POST" action="/admin/disputas/{{ prenda.id }}/cancelar"
+                    onsubmit="return confirm('¿Cancelar la venta? El artículo vuelve al catálogo sin cargo.')">
+                <button class="btn-accion btn-eliminar" style="width:100%">
+                  ❌ Cancelar venta
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% else %}
+  <div class="vacio" style="margin-top:3rem">
+    <p style="font-size:2rem">✅</p>
+    <p>No hay disputas pendientes de resolución</p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

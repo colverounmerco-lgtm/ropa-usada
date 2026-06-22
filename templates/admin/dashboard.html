@@ -21,6 +21,9 @@
     <div class="stat-card {% if retiros_pendientes > 0 %}stat-amarillo{% endif %}">
       <span class="stat-numero">{{ retiros_pendientes }}</span><span class="stat-label">Retiros pendientes</span>
     </div>
+    <div class="stat-card {% if disputas_pendientes > 0 %}stat-rojo{% endif %}">
+      <span class="stat-numero">{{ disputas_pendientes }}</span><span class="stat-label">Disputas activas</span>
+    </div>
   </div>
 
   <div class="admin-menu">
@@ -32,6 +35,9 @@
     </a>
     <a href="/admin/mensajes" class="admin-menu-item {% if mensajes_no_leidos > 0 %}menu-alerta{% endif %}">
       💬 Mensajes {% if mensajes_no_leidos > 0 %}<span class="badge-num">{{ mensajes_no_leidos }}</span>{% endif %}
+    </a>
+    <a href="/admin/disputas" class="admin-menu-item {% if disputas_pendientes > 0 %}menu-alerta{% endif %}">
+      ⚠️ Disputas {% if disputas_pendientes > 0 %}<span class="badge-num">{{ disputas_pendientes }}</span>{% endif %}
     </a>
     <a href="/admin/usuarios" class="admin-menu-item">👥 Usuarios</a>
     <a href="/admin/prendas" class="admin-menu-item">👗 Prendas</a>

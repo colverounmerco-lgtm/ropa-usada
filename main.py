@@ -577,15 +577,17 @@ def vendedor_eliminar(id):
 def admin_dashboard():
     recargas_pendientes = RecargaWallet.query.filter_by(estado='pendiente').count()
     retiros_pendientes  = RetiroWallet.query.filter_by(estado='pendiente').count()
+    disputas_pendientes = Prenda.query.filter_by(disputado=True).count()
     return render_template('admin/dashboard.html',
-        total_usuarios    = Usuario.query.filter(Usuario.rol != 'admin').count(),
-        total_vendedores  = Usuario.query.filter_by(rol='vendedor').count(),
-        total_compradores = Usuario.query.filter_by(rol='comprador').count(),
-        total_prendas     = Prenda.query.count(),
-        total_vendidas    = Prenda.query.filter_by(vendido=True).count(),
+        total_usuarios      = Usuario.query.filter(Usuario.rol != 'admin').count(),
+        total_vendedores    = Usuario.query.filter_by(rol='vendedor').count(),
+        total_compradores   = Usuario.query.filter_by(rol='comprador').count(),
+        total_prendas       = Prenda.query.count(),
+        total_vendidas      = Prenda.query.filter_by(vendido=True).count(),
         recargas_pendientes = recargas_pendientes,
         retiros_pendientes  = retiros_pendientes,
-        wallet_total      = db.session.query(db.func.sum(Usuario.wallet_saldo)).scalar() or 0
+        disputas_pendientes = disputas_pendientes,
+        wallet_total        = db.session.query(db.func.sum(Usuario.wallet_saldo)).scalar() or 0
     )
 
 @app.route('/admin/usuarios')
@@ -705,6 +707,37 @@ def admin_eliminar_prenda(id):
     db.session.commit()
     flash('🗑️ Prenda eliminada', 'success')
     return redirect(url_for('admin_prendas'))
+
+@app.route('/admin/disputas')
+@admin_requerido
+def admin_disputas():
+    disputas = Prenda.query.filter_by(disputado=True).order_by(Prenda.fecha_pendiente.desc()).all()
+    return render_template('admin/disputas.html', disputas=disputas)
+
+@app.route('/admin/disputas/<int:id>/confirmar', methods=['POST'])
+@admin_requerido
+def admin_disputas_confirmar(id):
+    prenda = Prenda.query.get_or_404(id)
+    _confirmar_venta(prenda)
+    prenda.disputado = False
+    db.session.commit()
+    flash(f'✅ Venta de "{prenda.nombre}" confirmada. Comisión descontada al vendedor.', 'success')
+    return redirect(url_for('admin_disputas'))
+
+@app.route('/admin/disputas/<int:id>/cancelar', methods=['POST'])
+@admin_requerido
+def admin_disputas_cancelar(id):
+    prenda = Prenda.query.get_or_404(id)
+    prenda.cantidad          += 1
+    prenda.unidades_vendidas  = max(0, prenda.unidades_vendidas - 1)
+    prenda.disputado          = False
+    prenda.vendido            = False
+    prenda.token_conf         = None
+    prenda.comprador_nombre   = None
+    prenda.fecha_pendiente    = None
+    db.session.commit()
+    flash(f'❌ Venta cancelada. "{prenda.nombre}" vuelve al catálogo sin cargo al vendedor.', 'info')
+    return redirect(url_for('admin_disputas'))
 
 # ─── CHAT ─────────────────────────────────────
 
